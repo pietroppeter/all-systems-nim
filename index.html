@@ -1,0 +1,1885 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <title>All Systems Nim · talk proposal flight plan</title>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type">
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <meta content="nimib 0.4.3" name="generator">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f2ecdc; --card:#fbf8ef; --ink:#15191f; --muted:#5f5a4e; --line:#d8cfb8;
+  --nim:#ffe953; --go:#2f9e55; --go-glow:#7dffa6; --hold:#e39b2d; --nogo:#c8372d;
+  --console:#1a2027; --console2:#232b34; --phos:#d6efd8; --steel:#8b97a3;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+:root{padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-area-inset-bottom,0) env(safe-area-inset-left,0)}
+html{background:var(--paper)}
+body{margin:0 auto;max-width:800px;padding:0 18px 60px;color:var(--ink);
+  font:17px/1.62 "IBM Plex Sans",system-ui,sans-serif;background:var(--paper)}
+header,footer .nb-box{display:flex;justify-content:space-between;align-items:center;gap:12px;
+  font:12px "IBM Plex Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:14px 0}
+header{border-bottom:3px double var(--ink)} footer .nb-box{border-top:3px double var(--ink);margin-top:44px}
+header a, footer a{color:var(--muted)}
+h1,h2,h3{font-family:Oswald,"Arial Narrow",sans-serif;line-height:1.08;text-transform:uppercase;letter-spacing:.01em}
+h1{font-size:clamp(46px,11vw,92px);font-weight:700;margin:30px 0 4px;letter-spacing:-.005em}
+h1 .nim{background:var(--nim);padding:0 .12em;border:3px solid var(--ink);box-shadow:5px 5px 0 var(--ink);display:inline-block;transform:rotate(-1.5deg)}
+h2{font-size:34px;font-weight:600;margin:60px 0 12px;padding-top:16px;border-top:3px solid var(--ink)}
+h2 .t{font:600 13px "IBM Plex Mono",monospace;color:var(--nogo);display:block;margin-bottom:8px;letter-spacing:.12em}
+h3{font-size:22px;font-weight:600;margin:30px 0 6px}
+a{color:#1f5f8b;text-decoration-thickness:1px;text-underline-offset:3px}
+p code, li code, td code{font:14px "IBM Plex Mono",monospace;background:#e8e0ca;padding:1px 5px;border-radius:3px}
+.lede{font-size:20px;line-height:1.5;color:#2c2a24}
+.stamp{display:inline-block;font:600 12px "IBM Plex Mono",monospace;letter-spacing:.14em;color:var(--nogo);
+  border:2px solid var(--nogo);padding:2px 8px;transform:rotate(-2deg);margin:8px 0}
+blockquote{margin:18px 0;padding:8px 18px;border-left:6px solid var(--nim);background:var(--card);color:#2c2a24}
+pre{margin:14px 0;overflow-x:auto}
+pre code{display:block;padding:14px 16px;font:13.4px/1.55 "IBM Plex Mono",monospace;background:var(--card);
+  border:1px solid var(--line);border-left:6px solid var(--ink);color:#22252a}
+pre.nb-output, pre samp{display:block;padding:12px 16px;font:13.4px/1.5 "IBM Plex Mono",monospace;background:var(--console);
+  color:var(--phos);white-space:pre;border-left:6px solid var(--go)}
+.hljs-keyword{color:#8a1f7a;font-weight:600}.hljs-type,.hljs-built_in{color:#9a5b00}.hljs-string{color:#2d7a3a}
+.hljs-number,.hljs-literal{color:#9a5b00}.hljs-comment{color:#8c8676;font-style:italic}.hljs-meta{color:#1f5f8b}
+table{border-collapse:collapse;width:100%;margin:16px 0;font-size:14.5px;line-height:1.45}
+th{font:600 12px "IBM Plex Mono",monospace;letter-spacing:.08em;text-transform:uppercase;text-align:left;
+  border-bottom:2px solid var(--ink);padding:6px 8px}
+td{border-bottom:1px solid var(--line);padding:7px 8px;vertical-align:top}
+details{margin:14px 0;border:1px dashed #bfb497;padding:4px 14px;background:var(--card)}
+details summary{cursor:pointer;font:600 13px "IBM Plex Mono",monospace;color:var(--muted);padding:6px 0;letter-spacing:.04em}
+
+/* transcript card */
+.transcript{background:var(--card);border:2px solid var(--ink);padding:16px 20px;margin:22px 0;
+  font:15px/1.7 "IBM Plex Mono",monospace;box-shadow:5px 5px 0 var(--ink)}
+.transcript .who{display:inline-block;min-width:110px;color:var(--muted)}
+.transcript .src{font-size:12px;color:var(--muted);margin-top:8px;border-top:1px dashed var(--line);padding-top:6px}
+
+/* the console */
+.console{background:var(--console);border-radius:6px;padding:16px;margin:22px 0;color:var(--phos);
+  border:3px solid #0e1216;box-shadow:inset 0 0 0 2px var(--console2),6px 6px 0 var(--ink)}
+.console .bar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;
+  font:600 11px "IBM Plex Mono",monospace;letter-spacing:.14em;color:var(--steel);margin-bottom:12px}
+.lamps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media (max-width:620px){.lamps{grid-template-columns:repeat(2,1fr)}}
+.lamp{background:var(--console2);border:1px solid #39434e;border-radius:4px;padding:10px 10px 9px;display:grid;
+  grid-template-columns:22px 1fr;gap:2px 10px;align-items:center;transition:background .3s}
+.lamp i{grid-row:span 2;width:20px;height:20px;border-radius:50%;background:#2f3a33;border:2px solid #0e1216;transition:all .25s}
+.lamp b{font:600 13px "IBM Plex Mono",monospace;letter-spacing:.1em;color:#e9eef2}
+.lamp span{font:12px "IBM Plex Sans",sans-serif;color:var(--steel)}
+.lamp.go i{background:var(--go-glow);box-shadow:0 0 10px 2px rgba(125,255,166,.65)}
+.lamp.go{background:#20302a}
+.lamp.hold i{background:var(--hold);box-shadow:0 0 10px 2px rgba(227,155,45,.6)}
+.lamp.live{outline:2px solid var(--nim)}
+.callout{margin-top:12px;min-height:3.4em;font:14px/1.55 "IBM Plex Mono",monospace;color:var(--phos);
+  border-top:1px solid #39434e;padding-top:10px}
+.callout .k{color:var(--nim)}
+.console button{font:600 12px "IBM Plex Mono",monospace;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
+  background:var(--nim);color:var(--ink);border:2px solid #0e1216;border-radius:3px;padding:6px 12px;box-shadow:2px 2px 0 #000}
+.console button.alt{background:var(--console2);color:var(--phos);border-color:#39434e}
+.console button:active{transform:translate(2px,2px);box-shadow:none}
+.allgo{font:700 22px Oswald,sans-serif;letter-spacing:.06em;color:var(--nim);text-transform:uppercase}
+
+/* countdown */
+.tminus{font:600 13px "IBM Plex Mono",monospace;letter-spacing:.1em;color:var(--steel)}
+.tminus b{color:var(--nim);font-size:15px}
+
+/* fact sheet */
+.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:0;border:2px solid var(--ink);background:var(--card);margin:18px 0}
+@media (max-width:620px){.facts{grid-template-columns:1fr}}
+.facts div{padding:8px 12px;border-bottom:1px solid var(--line);border-right:1px solid var(--line)}
+.facts div b{display:block;font:600 11px "IBM Plex Mono",monospace;letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
+
+/* consoles section */
+.station{border:2px solid var(--ink);background:var(--card);margin:22px 0;box-shadow:5px 5px 0 var(--ink)}
+.station .hd{display:flex;align-items:center;gap:12px;background:var(--ink);color:#f2ecdc;padding:8px 14px}
+.station .hd i{width:16px;height:16px;border-radius:50%;background:var(--go-glow);box-shadow:0 0 8px rgba(125,255,166,.7);flex:none}
+.station .hd b{font:600 14px "IBM Plex Mono",monospace;letter-spacing:.12em}
+.station .hd span{font:600 18px Oswald,sans-serif;text-transform:uppercase;letter-spacing:.03em}
+.station .bd{padding:6px 16px 10px}
+.station .bd p{margin:8px 0}
+.station .hold{border-top:1px dashed var(--line);margin-top:8px;padding-top:6px;font-size:15px}
+.station .hold::before{content:"HOLD";font:600 11px "IBM Plex Mono",monospace;letter-spacing:.12em;color:#fff;background:var(--hold);
+  padding:1px 6px;margin-right:8px;border-radius:2px}
+
+/* mission profiles */
+.missions{display:grid;grid-template-columns:1fr;gap:16px;margin:18px 0}
+.mission{border:2px solid var(--ink);background:var(--card);padding:12px 16px 10px;position:relative}
+.mission.pick{box-shadow:6px 6px 0 var(--go);border-color:var(--go)}
+.mission .patch{position:absolute;right:14px;top:12px;width:46px;height:46px;border-radius:50%;border:3px solid var(--ink);
+  display:grid;place-items:center;font:700 22px Oswald,sans-serif;background:var(--nim)}
+.mission h3{margin:2px 64px 4px 0}
+.mission .meta{font:12px "IBM Plex Mono",monospace;color:var(--muted);letter-spacing:.04em;margin-bottom:6px}
+.mission .meta em{font-style:normal;color:var(--ink);background:#e8e0ca;padding:0 4px;margin-right:4px}
+.mission ul{margin:6px 0;padding-left:20px}
+.mission .pros::before{content:"GO  ";font:600 12px "IBM Plex Mono",monospace;color:var(--go)}
+.mission .cons::before{content:"HOLD  ";font:600 12px "IBM Plex Mono",monospace;color:var(--hold)}
+.mission .pros,.mission .cons{margin:4px 0;font-size:15.5px}
+
+/* proposal form */
+.form{border:2px solid var(--ink);background:#fffdf6;margin:22px 0}
+.form .row{display:grid;grid-template-columns:150px 1fr;border-bottom:1px solid var(--line)}
+@media (max-width:620px){.form .row{grid-template-columns:1fr}}
+.form .row:last-child{border-bottom:0}
+.form .lab{font:600 11px "IBM Plex Mono",monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
+  padding:10px 12px;border-right:1px solid var(--line);background:#f6f0e0}
+.form .val{padding:10px 14px}
+.form .val p{margin:0 0 10px}
+.form .val p:last-child{margin-bottom:0}
+.form .val ol{margin:0;padding-left:20px}
+.form .title{font:600 24px Oswald,sans-serif;text-transform:uppercase;line-height:1.15}
+.copy{font:600 12px "IBM Plex Mono",monospace;letter-spacing:.06em;border:2px solid var(--ink);background:var(--nim);
+  padding:5px 12px;cursor:pointer;box-shadow:2px 2px 0 var(--ink);margin:4px 0}
+.copy:active{transform:translate(2px,2px);box-shadow:none}
+pre.plain{white-space:pre-wrap;font:13.5px/1.55 "IBM Plex Mono",monospace;background:var(--card);border:1px solid var(--line);padding:14px 16px}
+.small{font-size:14px;color:var(--muted)}
+#source{display:none}
+footer button{font:600 12px "IBM Plex Mono",monospace;border:1.5px solid var(--ink);background:var(--card);padding:4px 12px;cursor:pointer}
+</style>
+
+  
+  <style>
+.nb-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nb-small {
+  font-size: 0.8rem;
+}
+button.nb-small {
+  float: right;
+  padding: 2px;
+  padding-right: 5px;
+  padding-left: 5px;
+}
+section#source {
+  display:none
+}
+pre > code {
+  font-size: 1.2em;
+}
+.nb-output {
+  line-height: 1.15;
+}
+figure {
+  margin: 2rem 0;
+}
+figcaption {
+  text-align: center;
+}
+  
+</style>
+  
+    
+</head>
+<body>
+<header><span>Flight plan · a nimib notebook</span><span>FOSDEM 2027 · Open Source Systems Languages</span></header>
+<main>
+<h1>All Systems <span class="nim">Nim</span></h1>
+<p class="lede">A flight plan for a FOSDEM talk: what Nim is as a systems language, what it can do from kernels to word puzzles,
+and seven ways to tell it in 25 minutes. Ends with a proposal ready to paste into the CfP form.</p>
+<span class="stamp">DRAFT · REV 1 · 7 NOV 2026</span>
+<div class="console" id="board"><div class="bar"><span>MISSION CONTROL · NIM-1 · GO/NO-GO POLL</span><span class="tminus" id="tminus">T-MINUS <b>--</b> DAYS TO CFP CLOSE</span></div><div class="lamps"><div class="lamp" data-code="BOOSTER" data-call="Compiles to C, no VM, no mandatory runtime. Kernels, firmware and handhelds."><i></i><b>BOOSTER</b><span>Bare metal</span></div><div class="lamp" data-code="EECOM" data-call="Deterministic destructors and move semantics. No stop-the-world collector."><i></i><b>EECOM</b><span>Life support</span></div><div class="lamp" data-code="GUIDO" data-call="Templates, macros and a compile-time VM. The language bends to the domain."><i></i><b>GUIDO</b><span>Guidance</span></div><div class="lamp" data-code="FIDO" data-call="One codebase, four backends. Native at build time, JavaScript in the browser."><i></i><b>FIDO</b><span>Flight dynamics</span></div><div class="lamp" data-code="RETRO" data-call="importc in, exportc out. Rust through the C ABI, plugins loaded by Python."><i></i><b>RETRO</b><span>Docking</span></div><div class="lamp" data-code="INCO" data-call="The compiler is a platform: hot code reloading, incremental compilation."><i></i><b>INCO</b><span>Compiler</span></div><div class="lamp" data-code="SURGEON" data-call="Reads like Python, checked like Ada. Easy on humans, easy on agents."><i></i><b>SURGEON</b><span>Crew health</span></div><div class="lamp" data-code="CAPCOM" data-call="A browser from scratch, e-ink frames, games, a wordoku. People fly it."><i></i><b>CAPCOM</b><span>The crew</span></div></div><div class="callout" id="callout">FLIGHT: Stand by for the go/no-go poll.</div><div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button id="poll">▶ Poll the consoles</button><button class="alt" id="holds">Show holds</button></div></div>
+<p>The board above is the talk in miniature. Before a launch, the flight director polls every console of mission control
+and each one answers <em>go</em> or <em>no-go</em>. Press <strong>Poll the consoles</strong> to run the poll on Nim: eight consoles,
+eight things Nim brings to systems programming. <strong>Show holds</strong> lights the consoles where the honest answer
+is &quot;go, with a hold&quot;. The board's script is Nim, compiled to JavaScript by this page.</p>
+<h2><span class="t">T-10 · THE PHRASE</span>Cabin pressure go</h2>
+<div class="transcript">
+<div><span class="who">FREEDOM 7</span>Cabin pressure go.</div>
+<div><span class="who"></span>Fuel system go.</div>
+<div><span class="who"></span>Oxygen go.</div>
+<div><span class="who"></span><b>All systems go.</b></div>
+<div class="src">Alan Shepard, Mercury-Redstone 3, 5 May 1961, as retold by
+<a href="https://grammarist.com/idiom/all-systems-go/">Grammarist</a> and
+<a href="https://www.phrases.org.uk/meanings/all-systems-go.html">phrases.org.uk</a>, which credit the flight transcript.
+The <a href="https://mercury3.spacelog.org/page/PAO">Spacelog transcript</a> of the flight is the place to check the exact words before a slide.
+Not to be mixed up with "A-OK", which NASA's PAO John "Shorty" Powers attributed to Shepard and the tapes later showed he never said.</div>
+</div>
+<p>&quot;All systems go&quot; means every check is done and you can proceed without delay. It comes from the countdowns of
+the American space program, and it left aerospace to become everyday language for launches of any kind.</p>
+<p>It fits this talk three times over:</p>
+<ol>
+<li><strong>A launch.</strong> FOSDEM 2027 has a brand new devroom for <em>non-mainstream</em> systems languages, and Nim is named in its call.
+There is no Nim devroom in the 2027 list, so this room is where Nim lives this year.</li>
+<li><strong>A poll of systems.</strong> A systems language is many systems working together: memory, compiler, backends, interop.
+Mission control polls each console in turn, and a talk can do the same. Each console is one capability, a demo and a verdict.</li>
+<li><strong>Honesty.</strong> A console can answer <em>no-go</em>, or call a <em>hold</em>. The scientific Nim talk had &quot;rocks ahead&quot;
+at the end of each island; here the same honesty has a better name.</li>
+</ol>
+<p>Title: <strong>All Systems Nim</strong>. The pun works when read aloud (&quot;all systems go&quot; with one sound changed) and
+says the thesis: every system is there, and it is Nim all the way down.</p>
+<h2><span class="t">T-09 · THE LAUNCH SITE</span>The devroom</h2>
+<div class="facts">
+<div><b>Room</b>Open Source Systems Languages (new in 2027)</div>
+<div><b>When</b>Sunday 31 January 2027, afternoon</div>
+<div><b>Slots</b>25 or 45 minutes (say which in the submission)</div>
+<div><b>CfP closes</b>23 November 2026</div>
+<div><b>Speakers told</b>1 December · schedule 7 December</div>
+<div><b>Submit at</b><a href="https://fosdem.org/submit">fosdem.org/submit</a>, track "Open Source Systems Languages"</div>
+<div><b>Organizers</b>Jose E. Marchesi, Iain Buclaw, Sergei Giniatulin, Mike Shah</div>
+<div><b>Named languages</b>D, Odin, C3, Lobster, Zig, Nim</div>
+</div>
+<p>From the <a href="https://mikeshah.github.io/fosdem27-ossl-devroom/">devroom page</a>: a place to &quot;geek out about awesome
+non-mainstream programming languages&quot;. A non-mainstream systems language &quot;allows low level programming, and is not
+a 'top-20' language on the TIOBE index&quot;. The audience doesn't care about popularity: they &quot;want to do great engineering
+and are going to choose the right open source tool to get the work done&quot;. Suggested topics: adoption at your company,
+how language design trade-offs helped you, or a cool project you built.</p>
+<p>What this tells us about the audience:</p>
+<ul>
+<li>They already like at least one odd language (D, Zig, Odin, C3). They don't need convincing that a small language
+can be good; they want to know <strong>what is different about this one</strong>.</li>
+<li>&quot;Systems&quot; is in the room name, so the talk must show low-level credentials early, before the whimsy.</li>
+<li>The room invites design trade-offs. Talking about Nim's choices (and their costs) is on topic, not a detour.</li>
+<li>The neighbours will be D, Zig and Odin people. Comparisons should be trade-offs, not a contest, as in the
+scientific talk.</li>
+</ul>
+<h2><span class="t">T-08 · TELEMETRY</span>What we have to work with</h2>
+<h3>The sister talk</h3>
+<p><a href="https://github.com/pietroppeter/talk-sailing-seas-scientific-nim">Sailing Seas of Scientific Nim</a> is at
+Compute! Paris on 26 November 2026, three days after this CfP closes. Its shape is a template for this one:</p>
+<ul>
+<li>a <strong>metaphor</strong> carrying the whole talk (a sea voyage, seven islands),</li>
+<li><strong>no tutorial</strong>: Nim reads like Python, so examples stand on their own,</li>
+<li><strong>success stories</strong> of other people before your own work,</li>
+<li>an honest <strong>&quot;rocks ahead&quot;</strong> line at the end of each island,</li>
+<li>a nimib <strong>explainer page</strong> behind each slide for the curious,</li>
+<li>prepared <strong>spec-driven</strong>, with OpenSpec and a custom <code>talk</code> schema.</li>
+</ul>
+<p>The same moves apply here with a different domain: from scientific computing to systems programming. The
+islands become consoles, the rocks become holds, the voyage becomes a countdown.</p>
+<h3>The recent experiments</h3>
+<p>These are all from the last few weeks, most built with a coding agent and planned with OpenSpec.
+Each one shows a different systems feature, which is what makes them good talk material.</p>
+<table>
+<thead>
+<tr>
+<th>Project</th>
+<th>What it is</th>
+<th>The systems feature it shows</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/pietroppeter/nanuq">nanuq</a></td>
+<td>Polars DataFrames for Nim, 116 of 128 Polars feature groups</td>
+<td>A Rust crate exports a C ABI; Nim calls it with <code>importc</code> and frees Rust-heap objects in <code>=destroy</code>. Rust panics come back as Nim exceptions.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/pietroppeter/nanuq-more">nanuq-more</a></td>
+<td>Polars expression plugins written in Nim</td>
+<td>The Polars plugin ABI (Arrow C data interface) in pure Nim; one <code>{.polarsExpr.}</code> macro; the same shared library loads in Nanuq <strong>and in Python Polars</strong>. Built with <code>uv</code> and <code>zig cc</code>.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/pietroppeter/nanuqy">nanuqy</a></td>
+<td>Just started: replace the Rust half of nanuq</td>
+<td>Nimony (the next Nim compiler) and NIF.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/pietroppeter/cicak">cicak</a></td>
+<td>A REPL for Nim (research)</td>
+<td>Each input is a module, loaded into a live process with hot code reloading; incremental compilation (Nim 2.4) keeps each step cheap. The compiler as a platform.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/pietroppeter/cadero">cadero</a></td>
+<td>A mini CAD to design panel furniture (a real wall unit with a bed niche)</td>
+<td>Same model code native (drawings, cut list) and in the browser (3D viewer compiled to JS).</td>
+</tr>
+<tr>
+<td><a href="https://github.com/pietroppeter/parloku">parloku</a></td>
+<td>A wordoku game with a puzzle builder</td>
+<td>A nimib notebook compiled to JavaScript; drag and drop by &quot;declarative dragging&quot;.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/pietroppeter/zogyn">zogyn</a></td>
+<td>Declarative dragging as a library</td>
+<td>The engine is tested natively and runs in the browser, unchanged.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/pietroppeter/playdate-nim-emilia">playdate-nim</a> experiments</td>
+<td>Small games for the Playdate handheld</td>
+<td>An ARM microcontroller target with a C SDK.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/pietroppeter/nimib">nimib</a></td>
+<td>The notebook library this page is written in</td>
+<td>Runs code at build time, ships JS compiled from the same file.</td>
+</tr></tbody></table>
+<h3>Other people's systems</h3>
+<p>The scientific talk's <a href="https://pietroppeter.github.io/talk-sailing-seas-scientific-nim/island2_beyond_explainer.html">beyond-science explainer</a>
+already collects many of these. The ones that answer &quot;can Nim do real systems work?&quot;:</p>
+<table>
+<thead>
+<tr>
+<th>Domain</th>
+<th>Project</th>
+<th>Why it counts</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kernels</td>
+<td><a href="https://github.com/khaledh/fusion">Fusion OS</a> (khaledh)</td>
+<td>A hobby x86-64 OS in Nim, with a <a href="https://0xc0ffee.netlify.app/osdev/01-intro">write-up</a> from boot to user space.</td>
+</tr>
+<tr>
+<td>Browsers</td>
+<td><a href="https://sr.ht/~bptato/chawan/">Chawan</a> (bptato)</td>
+<td>A terminal web browser written from scratch: its own HTML and CSS engine, JavaScript through QuickJS.</td>
+</tr>
+<tr>
+<td>E-ink</td>
+<td><a href="https://github.com/FrameOS">FrameOS</a></td>
+<td>An OS for single-function smart frames and e-ink displays, apps compiled with Nim.</td>
+</tr>
+<tr>
+<td>Embedded</td>
+<td><a href="https://github.com/PMunch/ratel">Ratel</a> (PMunch), <a href="https://github.com/samdze/playdate-nim">playdate-nim</a>, INGCHIPS BLE SDK</td>
+<td>Microcontrollers with zero-cost abstractions; a vendor SDK that lists Nim next to C.</td>
+</tr>
+<tr>
+<td>GUI</td>
+<td><a href="https://github.com/can-lehmann/owlkettle">owlkettle</a> (GTK 4), <a href="https://github.com/elcritch/figuro">Figuro</a>, Status Desktop (Qt)</td>
+<td>A declarative GUI DSL built with macros; a desktop messenger shipping on three OSes.</td>
+</tr>
+<tr>
+<td>Games</td>
+<td><a href="https://github.com/planetis-m/naylib">naylib</a>, Turing Complete (Godot + Nim), <a href="https://github.com/jmgomez/NimForUE">NimForUE</a></td>
+<td>A game on Steam; Unreal Engine 5 with hot reloading.</td>
+</tr>
+<tr>
+<td>Infrastructure</td>
+<td><a href="https://github.com/status-im/nimbus-eth2">Nimbus</a>, <a href="https://github.com/mratsim/constantine">Constantine</a></td>
+<td>An Ethereum consensus client light enough for a Raspberry Pi; constant-time cryptography.</td>
+</tr>
+<tr>
+<td>Compilers</td>
+<td><a href="https://github.com/arnetheduck/nlvm">nlvm</a>, Nimony</td>
+<td>An LLVM backend with a JIT REPL; the next Nim compiler.</td>
+</tr></tbody></table>
+<p>Before the talk, check each claim and its date with the project: these are from memory and from the Paris explainer.</p>
+<h2><span class="t">T-07 · SYSTEMS THINKING</span>What is a system, anyway?</h2>
+<p>The prompt for this talk asks it directly: <em>what is systems thinking, after all?</em> Three answers, each good for one slide.</p>
+<p><strong>The 1998 split.</strong> In &quot;Scripting: Higher Level Programming for the 21st Century&quot; (IEEE Computer, 1998), John Ousterhout
+split languages in two: <em>system programming languages</em> (C, C++, Java), typed and compiled, for building data structures
+and algorithms from scratch; and <em>scripting languages</em> (Tcl, Perl, Python), for gluing components together quickly.
+You pick one side and pay its price. Most &quot;non-mainstream systems languages&quot; in this devroom are attempts to refuse
+that choice. Nim's tagline says it plainly: a statically typed compiled systems language with concepts from Python,
+Ada and Modula, aiming to be <em>efficient, expressive, elegant</em>.</p>
+<p><strong>The systems-thinking definition.</strong> Donella Meadows, in <em>Thinking in Systems</em>: a system is a set of elements, interconnected
+so that together they achieve a purpose. Look at a language that way and the question changes. Not &quot;can it touch
+the metal?&quot; but &quot;how do its parts work together?&quot; In Nim the macros, the type system, the destructors and the backends are
+not separate features. A macro writes code the type checker checks, which the destructors manage, which any backend can emit.
+<code>{.polarsExpr.}</code> in nanuq-more is a good example: one macro turns a plain Nim proc into a C ABI function with Arrow buffers,
+and on the JS backend the same macro does nothing, so the module runs in a browser too.</p>
+<p><strong>The human in the loop.</strong> The part of a system people forget is the operator. Cognitive load is a systems property:
+a language that fits in your head lets you hold more of the <em>rest</em> of the system in it. The 2026 version of this
+argument has a new operator: the coding agent. A language with little syntax, one obvious way to build, readable code
+and a fast, strict compiler gives an agent the same thing it gives a human: short feedback loops and fewer places to be wrong.
+Most of the experiments above were written that way.</p>
+<p>The talk's thesis, in one sentence:</p>
+<blockquote>
+<p>Nim is a systems language because its parts form a system: low-level control, a high ceiling and a low cognitive load,
+held together by a compiler you can program. That is why it is good at kernels <strong>and</strong> at word puzzles.</p>
+</blockquote>
+<h2><span class="t">T-06 · THE CONSOLES</span>The poll, console by console</h2>
+<p>This is the material for the main body of the recommended talk. Each console is one capability, with one community example,
+one example from the recent experiments, and a hold where there is one. A couple of consoles have code that ran
+when this page was built.</p>
+<div class="station"><div class="hd"><i></i><b>BOOSTER</b><span>Bare metal</span></div><div class="bd"><p>Nim compiles to C (or C++, or Objective-C) and then to machine code with the C compiler you already trust.
+No virtual machine, no mandatory runtime, binaries in the tens of kilobytes. You can turn the GC off, write
+<code>ptr</code> and <code>cast</code>, and target anything with a C toolchain.</p>
+<p><b>Community:</b> Fusion OS boots on x86-64; Ratel runs on AVR microcontrollers; INGCHIPS lists Nim in its BLE SDK.
+<b>Lab:</b> Playdate games through playdate-nim.</p></div></div>
+<div class="station"><div class="hd"><i></i><b>EECOM</b><span>Life support</span></div><div class="bd"><p>Since Nim 2.0 the default memory management is ORC: reference counting with move semantics and a cycle collector,
+so memory is freed at a predictable point, with no stop-the-world pauses. You can write your own <code>=destroy</code>,
+<code>=copy</code> and <code>=sink</code> hooks. nanuq uses them to own objects that live on the Rust heap:</p>
+<pre><code class="nohighlight">proc `=destroy`(x: DataFrameObj) =
+  if x.raw != nil: nq_df_free(x.raw)
+
+proc `=copy`(a: var DataFrameObj, b: DataFrameObj) {.error.}   # no accidental copies</code></pre>
+<p>That is RAII across a language boundary, in three lines. <b>Community:</b> Nimbus runs an Ethereum node on a Raspberry Pi.</p><div class="hold">ORC's cycle collector and multithreading took years to settle; older libraries and tutorials still assume refc.</div></div></div>
+<div class="station"><div class="hd"><i></i><b>GUIDO</b><span>Guidance</span></div><div class="bd"><p>Templates, hygienic macros over the typed AST, and a VM that runs ordinary Nim at compile time. Libraries
+grow their own syntax without a separate code generator. In nanuq, a dataframe is a block:</p>
+<pre><code class="nohighlight">let bears = newDataFrame:
+  name: ["Nanuq", "Siku", "Ursa", "Kallik"]
+  island: ["Svalbard", "Svalbard", "Wrangel", "Wrangel"]
+  kg: [420, 95, 380, nil]                # nil is a missing value</code></pre>
+<p>Below, a macro written for this page runs the poll. The strings are put together by the compiler;
+the program only prints them.</p></div></div>
+<pre><code class="nohighlight nim hljs"><span class="hljs-keyword">import</span> std/macros
+
+<span class="hljs-keyword">func</span> spoken(id: <span class="hljs-built_in">string</span>): <span class="hljs-built_in">string</span> =
+  <span class="hljs-comment">## cabinPressure -&gt; &quot;Cabin pressure&quot;</span>
+  <span class="hljs-keyword">for</span> i, ch <span class="hljs-keyword">in</span> id:
+    <span class="hljs-keyword">if</span> ch.isUpperAscii: <span class="hljs-literal">result</span>.add <span class="hljs-string">' '</span>
+    <span class="hljs-literal">result</span>.add(<span class="hljs-keyword">if</span> i == <span class="hljs-number">0</span>: ch.toUpperAscii <span class="hljs-keyword">else</span>: ch.toLowerAscii)
+
+<span class="hljs-keyword">macro</span> poll(systems: <span class="hljs-built_in">varargs</span>[<span class="hljs-built_in">untyped</span>]): <span class="hljs-built_in">untyped</span> =
+  <span class="hljs-literal">result</span> = newStmtList()
+  <span class="hljs-keyword">for</span> s <span class="hljs-keyword">in</span> systems:
+    <span class="hljs-keyword">let</span> line = spoken(s.strVal) &amp; <span class="hljs-string">&quot; go.&quot;</span>   <span class="hljs-comment"># runs inside the compiler</span>
+    <span class="hljs-literal">result</span>.add quote <span class="hljs-keyword">do</span>: <span class="hljs-keyword">echo</span> `line`
+  <span class="hljs-literal">result</span>.add quote <span class="hljs-keyword">do</span>: <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;All systems go.&quot;</span>
+
+poll cabinPressure, fuelSystem, oxygen</code></pre>
+<pre class="nb-output">Cabin pressure go.
+Fuel system go.
+Oxygen go.
+All systems go.
+</pre>
+<div class="small" style="margin:-4px 0 20px">The macro's output, as the compiler sees it, is just
+<code>echo "Cabin pressure go."</code> three times and a last line. <b>Community:</b> owlkettle builds GTK 4 apps from a declarative
+macro DSL; Karax does the same for the web.</div>
+<div class="station"><div class="hd"><i></i><b>FIDO</b><span>Flight dynamics</span></div><div class="bd"><p>The same source compiles to C, C++, Objective-C and JavaScript, and NimScript runs it in the compiler's VM.
+That is not a gimmick for the web: it is how cadero draws its plans natively and shows a 3D viewer in the browser
+from the same model, how zogyn tests its drag engine natively and ships it to the browser unchanged, and how the board at
+the top of this page works.</p>
+<pre><code class="nohighlight">nim c   -d:release app.nim     # C, then your C compiler
+nim cpp app.nim                # C++: talk to C++ libraries, Unreal, Qt
+nim objc app.nim               # Objective-C: talk to Apple frameworks
+nim js  app.nim                # JavaScript: the browser
+nim e   build.nims             # NimScript: the compiler's VM</code></pre><div class="hold">The JS backend is a different world: no threads, no C FFI, and some stdlib modules don't exist there.</div></div></div>
+<div class="station"><div class="hd"><i></i><b>RETRO</b><span>Docking</span></div><div class="bd"><p>Nim speaks the C ABI in both directions. <code>importc</code> calls anything with a C interface, including Rust
+that exports one: that is all of nanuq. <code>exportc</code> and <code>--app:lib</code> go the other way:
+nanuq-more builds a shared library that Python Polars loads as a plugin, from plain Nim procs:</p>
+<pre><code class="nohighlight">proc isoweek*(d: Date32): IsoWeek {.polarsExpr.} =
+  ...   # plain Nim; the pragma also exports it to Polars</code></pre>
+<p><b>Community:</b> nimpy (Python both ways), godot-nim, NimForUE, wrappers generated by Futhark from C headers.</p><div class="hold">nanuq's Rust half is a ~286 MB static library (53 MB download). Interop is easy; distribution is the hard part. nanuqy is the experiment to drop it.</div></div></div>
+<div class="station"><div class="hd"><i></i><b>INCO</b><span>Compiler</span></div><div class="bd"><p>The compiler is a library and a platform: NimScript for build files, hot code reloading (each module a shared library,
+globals survive reloads), and incremental compilation in Nim 2.4. cicak puts the last two together to try a real REPL:
+each input becomes a module, loaded into a live process. Nimony, the next compiler, works on NIF, a text format for
+the compiler's intermediate code that other tools can read and write.</p><div class="hold">Hot code reloading is rough (main module not reloadable, leaks under ORC, tested only without threads); 2.4.0 shipped without a tool that IC needs. Nimony means a transition ahead.</div></div></div>
+<div class="station"><div class="hd"><i></i><b>SURGEON</b><span>Crew health</span></div><div class="bd"><p>Nim reads like Python: indentation, few symbols, type inference, uniform call syntax. It checks like Ada: distinct types,
+range types, effects, exhaustive <code>case</code>. There is one main way to build. That makes it light to read, which
+matters for humans maintaining code and for agents writing it: a strict compiler with clear errors is the best reviewer
+an agent can get. Every experiment in the lab table was built with an agent, spec first, in a few days.</p><div class="hold">Models have seen far less Nim than Python or Rust: they drift to old APIs and invent procs. Specs, tests and a fast compiler catch it, but the friction is real.</div></div></div>
+<div class="station"><div class="hd"><i></i><b>CAPCOM</b><span>The crew</span></div><div class="bd"><p>A language is its people. A web browser from scratch, e-ink photo frames, a kernel tutorial, a game on Steam,
+an Ethereum client. And the whimsical: a wordoku you play by dragging tiles, a CAD drawn for one wall of one flat,
+animated explainers, a notebook library that writes pages like this one.</p><div class="hold">A small community with a short bench: when a key maintainer gets busy, a library stops. Package tooling (nimble, atlas) has been in flux.</div></div></div>
+<h2><span class="t">T-05 · MISSION PROFILES</span>Seven ways to fly this talk</h2>
+<p>Same payload, different flight plans. Each one could carry the thesis; they differ in how much they demo, how personal
+they are and how they answer &quot;but is it really systems?&quot;. Times are for a 25-minute slot.</p>
+<div class="missions"><div class="mission pick"><div class="patch">A</div><h3>The go/no-go poll</h3><div class="meta"><em>recommended</em><em>25′ or 45′</em><em>demo: medium</em></div><p>Open with the Freedom 7 checks. The flight director polls eight consoles (the ones above); each answers with a capability, a community example, an example from the lab and a verdict: go, or go with a hold. Close with the holds summed up and "all systems Nim".</p><div class="pros">The same skeleton as the Paris talk (islands become consoles, rocks become holds), so the preparation carries over. Honest by design. Scales: drop consoles for 25′, add demos for 45′.</div><div class="cons">Eight beats in 18 minutes is tight; each console gets about two. Needs a strong visual (the board) so it doesn't feel like a list.</div></div><div class="mission"><div class="patch">B</div><h3>From the pad to the payload</h3><div class="meta"><em>25′</em><em>demo: medium</em></div><p>Climb the stack from the bottom: hardware and firmware, kernel, runtime and memory, compiler and macros, applications and GUIs, the browser, and at the top the human (cognitive load). Each layer is one Nim project.</p><div class="pros">Answers "is it systems?" first, then earns the whimsy at the top. Easy for a systems audience to follow.</div><div class="cons">Your own experiments are all near the top of the stack, so the low layers are other people's work only.</div></div><div class="mission"><div class="patch">C</div><h3>Mercury, Gemini, Apollo</h3><div class="meta"><em>45′</em><em>demo: high</em></div><p>Three programs of growing ambition. Mercury: one-person flights, small whimsical tools (parloku, cadero). Gemini: two-seat docking, interop (nanuq and Rust, nanuq-more and Python). Apollo: going far, the compiler as a platform (cicak, Nimony) and the community's kernels and browsers.</p><div class="pros">A strong arc with a climax. Lets the lab projects lead.</div><div class="cons">Needs the 45′ slot. The space history can eat the time it decorates.</div></div><div class="mission"><div class="patch">D</div><h3>Thinking in systems</h3><div class="meta"><em>25′</em><em>demo: low</em></div><p>An essay talk. Meadows' elements, interconnections and purpose, applied to a language. Stocks and flows: libraries and contributors. Feedback loops: low cognitive load → more experiments → more libraries, and agents as a new loop. Nim as the example throughout.</p><div class="pros">The most original take, and directly answers "what is systems thinking?". Nobody else in the room will give this talk.</div><div class="cons">Little code for a room that wants code. Risky if the abstraction doesn't land.</div></div><div class="mission"><div class="patch">E</div><h3>Mission log: four flights in four weeks</h3><div class="meta"><em>25′</em><em>demo: high</em></div><p>A case-study talk. nanuq, cicak, cadero and parloku, each a short flight report: the goal, what Nim made easy, what broke, what it says about Nim as a systems language. The agents and OpenSpec workflow as the ground crew.</p><div class="pros">Concrete and personal; the devroom asks for "a cool project you built". All the material exists.</div><div class="cons">Reads as a portfolio. Weak on the low-level end, and the agent angle may dominate questions.</div></div><div class="mission"><div class="patch">F</div><h3>One payload, many boosters</h3><div class="meta"><em>25′</em><em>demo: very high</em></div><p>One small program (say, a wordoku solver) launched on every target live: C, C++, Objective-C, JavaScript in the browser, a Python extension, a Playdate, WebAssembly through emscripten. Each launch shows one feature.</p><div class="pros">Memorable and visual. The backends are Nim's most distinctive trait among systems languages.</div><div class="cons">Live demos at FOSDEM (with FOSDEM wifi) are a gamble. Shows breadth, less depth.</div></div><div class="mission"><div class="patch">G</div><h3>Humans and agents in the loop</h3><div class="meta"><em>25′</em><em>demo: medium</em></div><p>Nim as a language for agent-written code. Low cognitive load, a strict and fast compiler, macros that keep code short, and what happened when the lab projects were built that way: what agents get right and wrong in Nim.</p><div class="pros">Very topical, with first-hand data.</div><div class="cons">Divisive at FOSDEM; the language becomes a backdrop. Better as one console (SURGEON) than as the whole talk.</div></div></div>
+<h3>Recommendation</h3>
+<p>Fly <strong>A, the go/no-go poll</strong>, and borrow from the others:</p>
+<ul>
+<li>the <strong>opening</strong> of D: the 1998 split and Meadows' definition, one slide each, to set up &quot;what is a system&quot;;</li>
+<li>the <strong>console demos</strong> from E: lab projects as the second example on each console, after a community example;</li>
+<li>a <strong>running gag</strong> from F: the poll board itself is Nim compiled to JS, and a single slide shows the same file on four backends;</li>
+<li>the <strong>agent angle</strong> from G, but kept to one console (SURGEON), so it is a point and not the whole talk.</li>
+</ul>
+<p>Ask for <strong>25 minutes</strong>. Eight consoles fit if each is two minutes, and the poll format makes cutting one easy on the day.
+If you'd rather have 45, profile C (Mercury, Gemini, Apollo) is the one that uses the time best.</p>
+<h3>Flight plan for 25 minutes</h3>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Min</th>
+<th>Content</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T-minus</td>
+<td>3</td>
+<td>Freedom 7 checks. What's a systems language: Ousterhout's split, Meadows' definition, Nim's &quot;efficient, expressive, elegant&quot;. Thesis.</td>
+</tr>
+<tr>
+<td>Poll: BOOSTER, EECOM</td>
+<td>4</td>
+<td>Bare metal (Fusion OS, Playdate). Memory: ORC and <code>=destroy</code>, nanuq owning Rust objects.</td>
+</tr>
+<tr>
+<td>Poll: GUIDO, FIDO</td>
+<td>5</td>
+<td>Macros and compile time (the <code>poll</code> macro, nanuq's DSL). Four backends: cadero's plans and 3D viewer from one model.</td>
+</tr>
+<tr>
+<td>Poll: RETRO, INCO</td>
+<td>5</td>
+<td>Interop: nanuq calls Rust, nanuq-more is loaded by Python. The compiler as a platform: cicak's REPL with HCR and IC.</td>
+</tr>
+<tr>
+<td>Poll: SURGEON, CAPCOM</td>
+<td>4</td>
+<td>Cognitive load for humans and agents. The crew: Chawan, FrameOS, games, parloku.</td>
+</tr>
+<tr>
+<td>Splashdown</td>
+<td>2</td>
+<td>The holds, summed up. Where to start, where the community is. &quot;All systems Nim.&quot;</td>
+</tr>
+<tr>
+<td>Q&amp;A</td>
+<td>2</td>
+<td></td>
+</tr></tbody></table>
+<h2><span class="t">T-04 · PAYLOAD</span>The proposal</h2>
+<p>Ready for the CfP form. The plain-text version below has the same words, for copy and paste.
+The bio is a placeholder: adjust it to how you want to be introduced.</p>
+<div class="form">
+<div class="row"><div class="lab">Title</div><div class="val"><div class="title">All Systems Nim</div></div></div>
+<div class="row"><div class="lab">Subtitle</div><div class="val">A go/no-go poll for a systems language with a low cognitive load</div></div>
+<div class="row"><div class="lab">Track</div><div class="val">Open Source Systems Languages</div></div>
+<div class="row"><div class="lab">Duration</div><div class="val">25 minutes</div></div>
+<div class="row"><div class="lab">Abstract</div><div class="val"><p>"Cabin pressure go. Fuel system go. Oxygen go. All systems go." Before a launch, mission control polls every console, and each one answers go or no-go. This talk runs the same poll on Nim.</p><p>Nim is an open source systems language that compiles to C, C++, Objective-C and JavaScript. It reads like Python, frees memory with deterministic destructors, and has macros that run inside the compiler. People have written kernels, a web browser from scratch, e-ink display frameworks, firmware, GUIs, games and an Ethereum client in it. It is also a language where a whimsical idea becomes a working tool in a weekend, with a human or a coding agent at the keyboard.</p><p>We poll eight consoles, one capability each: bare metal, memory, metaprogramming, backends, interop, the compiler as a platform, cognitive load and the crew. Each answers with an example from the community and one from my recent experiments: a Polars dataframe library that calls Rust through its C ABI, Polars plugins written in Nim that Python loads, a REPL built on hot code reloading and incremental compilation, a furniture CAD with a 3D viewer in the browser, and a word puzzle game. Where Nim is not ready, we call a hold and say why.</p><p>Along the way we ask what makes a language a systems language, and why a low cognitive load is a systems property, for humans and agents alike.</p></div></div>
+<div class="row"><div class="lab">Description</div><div class="val"><p>No Nim knowledge is needed: the examples read like Python. The talk is for people who build systems in any language and want to know what is different about Nim, and for Nim users looking for arguments.</p><p>Outline (25 minutes):<br>1. T-minus (3 min): the Freedom 7 checks; what is a systems language, from Ousterhout's 1998 split between system and scripting languages to Nim's aim of being efficient, expressive and elegant.<br>2. The poll (18 min): eight consoles, each a capability with a community example, an example of mine and a verdict.<br>   - Bare metal: compiling through C, no runtime; kernels, microcontrollers, a handheld console.<br>   - Memory: ORC, move semantics and destructors; a Nim library owning objects on the Rust heap.<br>   - Metaprogramming: templates, macros and compile-time code; DSLs for dataframes and GUIs.<br>   - Backends: one model drawn natively and in the browser.<br>   - Interop: calling Rust through the C ABI; Nim plugins loaded by Python Polars.<br>   - The compiler as a platform: hot code reloading and incremental compilation for a REPL; the next compiler, Nimony.<br>   - Cognitive load: why it matters for people, and for coding agents.<br>   - The crew: a browser from scratch, e-ink frames, games, and some whimsy.<br>3. Splashdown (2 min): the holds (ecosystem size, tooling, a compiler transition), and where to start.</p><p>Every example links to an open source repository and to a notebook page that explains it.</p></div></div>
+<div class="row"><div class="lab">Speaker bio</div><div class="val"><p>Pietro Peterlongo is a mathematician and data scientist at AgileLab, maintainer of nimib (literate programming notebooks in Nim) and a long-time organizer of the Nim devroom at FOSDEM. He organizes Python Milan and PyData Milan, and builds odd and useful things in Nim.</p></div></div>
+</div>
+<details><summary>PLAIN TEXT FOR THE CFP FORM</summary><button class="copy" id="copy">Copy to clipboard</button><pre class="plain" id="plain">TITLE
+All Systems Nim: A go/no-go poll for a systems language with a low cognitive load
+
+TRACK
+Open Source Systems Languages (25 minutes)
+
+ABSTRACT
+"Cabin pressure go. Fuel system go. Oxygen go. All systems go." Before a launch, mission control polls every console, and each one answers go or no-go. This talk runs the same poll on Nim.
+
+Nim is an open source systems language that compiles to C, C++, Objective-C and JavaScript. It reads like Python, frees memory with deterministic destructors, and has macros that run inside the compiler. People have written kernels, a web browser from scratch, e-ink display frameworks, firmware, GUIs, games and an Ethereum client in it. It is also a language where a whimsical idea becomes a working tool in a weekend, with a human or a coding agent at the keyboard.
+
+We poll eight consoles, one capability each: bare metal, memory, metaprogramming, backends, interop, the compiler as a platform, cognitive load and the crew. Each answers with an example from the community and one from my recent experiments: a Polars dataframe library that calls Rust through its C ABI, Polars plugins written in Nim that Python loads, a REPL built on hot code reloading and incremental compilation, a furniture CAD with a 3D viewer in the browser, and a word puzzle game. Where Nim is not ready, we call a hold and say why.
+
+Along the way we ask what makes a language a systems language, and why a low cognitive load is a systems property, for humans and agents alike.
+
+DESCRIPTION
+No Nim knowledge is needed: the examples read like Python. The talk is for people who build systems in any language and want to know what is different about Nim, and for Nim users looking for arguments.
+
+Outline (25 minutes):
+1. T-minus (3 min): the Freedom 7 checks; what is a systems language, from Ousterhout's 1998 split between system and scripting languages to Nim's aim of being efficient, expressive and elegant.
+2. The poll (18 min): eight consoles, each a capability with a community example, an example of mine and a verdict.
+   - Bare metal: compiling through C, no runtime; kernels, microcontrollers, a handheld console.
+   - Memory: ORC, move semantics and destructors; a Nim library owning objects on the Rust heap.
+   - Metaprogramming: templates, macros and compile-time code; DSLs for dataframes and GUIs.
+   - Backends: one model drawn natively and in the browser.
+   - Interop: calling Rust through the C ABI; Nim plugins loaded by Python Polars.
+   - The compiler as a platform: hot code reloading and incremental compilation for a REPL; the next compiler, Nimony.
+   - Cognitive load: why it matters for people, and for coding agents.
+   - The crew: a browser from scratch, e-ink frames, games, and some whimsy.
+3. Splashdown (2 min): the holds (ecosystem size, tooling, a compiler transition), and where to start.
+
+Every example links to an open source repository and to a notebook page that explains it.
+
+SPEAKER BIO
+Pietro Peterlongo is a mathematician and data scientist at AgileLab, maintainer of nimib (literate programming notebooks in Nim) and a long-time organizer of the Nim devroom at FOSDEM. He organizes Python Milan and PyData Milan, and builds odd and useful things in Nim.
+</pre></details>
+<h4>Other titles, if the pun is too much</h4>
+<ul>
+<li>All Systems Nim: from kernels to wordokus</li>
+<li>All Systems Nim: low cognitive load, high ceiling</li>
+<li>Go/No-Go: polling Nim as a systems language</li>
+</ul>
+<h2><span class="t">T-03 · ABORT MODES</span>Risks and open questions</h2>
+<ul>
+<li><strong>Deadline.</strong> The CfP closes on 23 November, three days before the Paris talk. Submit the proposal first; the slides
+can reuse the Paris machinery (nimiSlides, OpenSpec talk schema, explainers) after Paris.</li>
+<li><strong>&quot;Is it systems?&quot;</strong> The whimsical projects are the most fun and the least low-level. Keep the order: credentials first
+(BOOSTER, EECOM), whimsy last (CAPCOM).</li>
+<li><strong>The agent angle</strong> is the most likely to start an argument at FOSDEM. Keep it a point about cognitive load, with your own
+data, and avoid predictions.</li>
+<li><strong>Overlap with Paris.</strong> Some examples (the success stories, nimib) are shared. The audience is different, and the focus
+moves from data to systems, so a little overlap is fine; reuse the explainers.</li>
+<li><strong>Facts to check</strong> before slides: the exact Freedom 7 wording (Spacelog transcript), the community project claims in the table (all from memory),
+and nanuq's numbers on the day.</li>
+<li><strong>Demo budget.</strong> No live builds on stage. Recorded demos or pages that already run in the browser (parloku, cadero's viewer,
+this board) are safe.</li>
+</ul>
+<h2><span class="t">T-02 · REFERENCES</span>Sources</h2>
+<ul>
+<li>FOSDEM 2027: <a href="https://fosdem.org/2027/news/accepted-developer-rooms/">accepted developer rooms</a> and the
+<a href="https://mikeshah.github.io/fosdem27-ossl-devroom/">Open Source Systems Languages devroom page</a>.</li>
+<li><a href="https://pietroppeter.github.io/claude-artifacts/fosdem-devrooms/">FOSDEM devrooms 2024 to 2027 compared</a>, an earlier page in this repository.</li>
+<li><a href="https://github.com/pietroppeter/talk-sailing-seas-scientific-nim">Sailing Seas of Scientific Nim</a>: abstract, outline and explainers.</li>
+<li>The lab: <a href="https://github.com/pietroppeter/nanuq">nanuq</a>, <a href="https://github.com/pietroppeter/nanuq-more">nanuq-more</a>,
+<a href="https://github.com/pietroppeter/cicak">cicak</a>, <a href="https://github.com/pietroppeter/cadero">cadero</a>,
+<a href="https://github.com/pietroppeter/parloku">parloku</a>, <a href="https://github.com/pietroppeter/zogyn">zogyn</a>.</li>
+<li>John K. Ousterhout, &quot;Scripting: Higher Level Programming for the 21st Century&quot;, <em>IEEE Computer</em>, March 1998.</li>
+<li>Donella H. Meadows, <em>Thinking in Systems: A Primer</em>, 2008.</li>
+<li><a href="https://0xc0ffee.netlify.app/osdev/01-intro">Writing an OS in Nim</a> (Fusion OS).</li>
+</ul>
+<p class="small" style="margin-top:30px">Countdown complete. <span class="allgo" style="color:var(--ink)">All systems Nim.</span></p>
+
+<script>
+/* Generated by the Nim Compiler v2.2.4 */
+var framePtr = null;
+var excHandler = 0;
+var lastJSError = null;
+var NTI33554435 = {size: 0,kind: 31,base: null,node: null,finalizer: null};
+var NTI536871059 = {size: 0, kind: 17, base: null, node: null, finalizer: null};
+var NTI33555167 = {size: 0, kind: 17, base: null, node: null, finalizer: null};
+var NTI33555175 = {size: 0, kind: 22, base: null, node: null, finalizer: null};
+var NTI33554449 = {size: 0,kind: 28,base: null,node: null,finalizer: null};
+var NTI33554450 = {size: 0,kind: 29,base: null,node: null,finalizer: null};
+var NTI33555174 = {size: 0, kind: 22, base: null, node: null, finalizer: null};
+var NTI33555171 = {size: 0, kind: 17, base: null, node: null, finalizer: null};
+var NTI33555172 = {size: 0, kind: 17, base: null, node: null, finalizer: null};
+var NNI33555172 = {kind: 2, len: 0, offset: 0, typ: null, name: null, sons: []};
+NTI33555172.node = NNI33555172;
+NTI33555174.base = NTI33555171;
+NTI33555175.base = NTI33555171;
+var NNI33555171 = {kind: 2, len: 5, offset: 0, typ: null, name: null, sons: [{kind: 1, offset: "parent", len: 0, typ: NTI33555174, name: "parent", sons: null}, 
+{kind: 1, offset: "name", len: 0, typ: NTI33554450, name: "name", sons: null}, 
+{kind: 1, offset: "message", len: 0, typ: NTI33554449, name: "msg", sons: null}, 
+{kind: 1, offset: "trace", len: 0, typ: NTI33554449, name: "trace", sons: null}, 
+{kind: 1, offset: "up", len: 0, typ: NTI33555175, name: "up", sons: null}]};
+NTI33555171.node = NNI33555171;
+var NNI33555167 = {kind: 2, len: 0, offset: 0, typ: null, name: null, sons: []};
+NTI33555167.node = NNI33555167;
+NTI33555171.base = NTI33555167;
+NTI33555172.base = NTI33555171;
+var NNI536871059 = {kind: 1, offset: "i0", len: 0, typ: NTI33554435, name: "i0", sons: null};
+NTI536871059.node = NNI536871059;
+NTI536871059.base = NTI33555167;
+
+function isObj(obj_p0, subclass_p1) {
+  var result_33557451 = false;
+
+  BeforeRet: {
+    var x_33557452 = obj_p0;
+    if ((x_33557452 == subclass_p1)) {
+    result_33557451 = true;
+    break BeforeRet;
+    }
+    
+    Label1: {
+        Label2: while (true) {
+        if (!!((x_33557452 == subclass_p1))) break Label2;
+          if ((x_33557452 == null)) {
+          result_33557451 = false;
+          break BeforeRet;
+          }
+          
+          x_33557452 = x_33557452.base;
+        }
+    };
+    result_33557451 = true;
+    break BeforeRet;
+  };
+
+  return result_33557451;
+
+}
+
+function toJSStr(s_p0) {
+  var result_33556927 = null;
+
+    var res_33556981 = newSeq__system_u2524((s_p0).length);
+    var i_33556982 = 0;
+    var j_33556983 = 0;
+    Label1: {
+        Label2: while (true) {
+        if (!(i_33556982 < (s_p0).length)) break Label2;
+          var c_33556984 = s_p0[i_33556982];
+          if ((c_33556984 < 128)) {
+          res_33556981[j_33556983] = String.fromCharCode(c_33556984);
+          i_33556982 += 1;
+          }
+          else {
+            var helper_33557010 = newSeq__system_u2524(0);
+            Label3: {
+                Label4: while (true) {
+                if (!true) break Label4;
+                  var code_33557011 = c_33556984.toString(16);
+                  if ((((code_33557011) == null ? 0 : (code_33557011).length) == 1)) {
+                  helper_33557010.push("%0");;
+                  }
+                  else {
+                  helper_33557010.push("%");;
+                  }
+                  
+                  helper_33557010.push(code_33557011);;
+                  i_33556982 += 1;
+                  if ((((s_p0).length <= i_33556982) || (s_p0[i_33556982] < 128))) {
+                  break Label3;
+                  }
+                  
+                  c_33556984 = s_p0[i_33556982];
+                }
+            };
+++excHandler;
+            try {
+            res_33556981[j_33556983] = decodeURIComponent(helper_33557010.join(""));
+--excHandler;
+} catch (EXCEPTION) {
+ var prevJSError = lastJSError;
+ lastJSError = EXCEPTION;
+ --excHandler;
+            raiseDefect();
+            res_33556981[j_33556983] = helper_33557010.join("");
+            lastJSError = prevJSError;
+            } finally {
+            }
+          }
+          
+          j_33556983 += 1;
+        }
+    };
+    if (res_33556981.length < j_33556983) { for (var i = res_33556981.length ; i < j_33556983 ; ++i) res_33556981.push(null); }
+               else { res_33556981.length = j_33556983; };
+    result_33556927 = res_33556981.join("");
+
+  return result_33556927;
+
+}
+
+function makeNimstrLit(c_p0) {
+      var result = [];
+  for (var i = 0; i < c_p0.length; ++i) {
+    result[i] = c_p0.charCodeAt(i);
+  }
+  return result;
+  
+
+  
+}
+
+function cstrToNimstr(c_p0) {
+      var ln = c_p0.length;
+  var result = new Array(ln);
+  var r = 0;
+  for (var i = 0; i < ln; ++i) {
+    var ch = c_p0.charCodeAt(i);
+
+    if (ch < 128) {
+      result[r] = ch;
+    }
+    else {
+      if (ch < 2048) {
+        result[r] = (ch >> 6) | 192;
+      }
+      else {
+        if (ch < 55296 || ch >= 57344) {
+          result[r] = (ch >> 12) | 224;
+        }
+        else {
+            ++i;
+            ch = 65536 + (((ch & 1023) << 10) | (c_p0.charCodeAt(i) & 1023));
+            result[r] = (ch >> 18) | 240;
+            ++r;
+            result[r] = ((ch >> 12) & 63) | 128;
+        }
+        ++r;
+        result[r] = ((ch >> 6) & 63) | 128;
+      }
+      ++r;
+      result[r] = (ch & 63) | 128;
+    }
+    ++r;
+  }
+  return result;
+  
+
+  
+}
+
+function eqStrings(a_p0, b_p1) {
+        if (a_p0 == b_p1) return true;
+    if (a_p0 === null && b_p1.length == 0) return true;
+    if (b_p1 === null && a_p0.length == 0) return true;
+    if ((!a_p0) || (!b_p1)) return false;
+    var alen = a_p0.length;
+    if (alen != b_p1.length) return false;
+    for (var i = 0; i < alen; ++i)
+      if (a_p0[i] != b_p1[i]) return false;
+    return true;
+  
+
+  
+}
+              var holdCodes_536871038 = [[69,69,67,79,77], [70,73,68,79], [82,69,84,82,79], [73,78,67,79], [83,85,82,71,69,79,78], [67,65,80,67,79,77]];
+
+function setConstr() {
+        var result = {};
+    for (var i = 0; i < arguments.length; ++i) {
+      var x = arguments[i];
+      if (typeof(x) == "object") {
+        for (var j = x[0]; j <= x[1]; ++j) {
+          result[j] = true;
+        }
+      } else {
+        result[x] = true;
+      }
+    }
+    return result;
+  
+
+  
+}
+var ConstSet1 = setConstr(17, 16, 4, 18, 27, 19, 23, 22, 21);
+
+function nimCopy(dest_p0, src_p1, ti_p2) {
+  var result_33557338 = null;
+
+    switch (ti_p2.kind) {
+    case 21:
+    case 22:
+    case 23:
+    case 5:
+      if (!(isFatPointer__system_u2886(ti_p2))) {
+      result_33557338 = src_p1;
+      }
+      else {
+        result_33557338 = [src_p1[0], src_p1[1]];
+      }
+      
+      break;
+    case 19:
+            if (dest_p0 === null || dest_p0 === undefined) {
+        dest_p0 = {};
+      }
+      else {
+        for (var key in dest_p0) { delete dest_p0[key]; }
+      }
+      for (var key in src_p1) { dest_p0[key] = src_p1[key]; }
+      result_33557338 = dest_p0;
+    
+      break;
+    case 18:
+    case 17:
+      if (!((ti_p2.base == null))) {
+      result_33557338 = nimCopy(dest_p0, src_p1, ti_p2.base);
+      }
+      else {
+      if ((ti_p2.kind == 17)) {
+      result_33557338 = (dest_p0 === null || dest_p0 === undefined) ? {m_type: ti_p2} : dest_p0;
+      }
+      else {
+        result_33557338 = (dest_p0 === null || dest_p0 === undefined) ? {} : dest_p0;
+      }
+      }
+      nimCopyAux(result_33557338, src_p1, ti_p2.node);
+      break;
+    case 4:
+    case 16:
+            if(ArrayBuffer.isView(src_p1)) { 
+        if(dest_p0 === null || dest_p0 === undefined || dest_p0.length != src_p1.length) {
+          dest_p0 = new src_p1.constructor(src_p1);
+        } else {
+          dest_p0.set(src_p1, 0);
+        }
+        result_33557338 = dest_p0;
+      } else {
+        if (src_p1 === null) {
+          result_33557338 = null;
+        }
+        else {
+          if (dest_p0 === null || dest_p0 === undefined || dest_p0.length != src_p1.length) {
+            dest_p0 = new Array(src_p1.length);
+          }
+          result_33557338 = dest_p0;
+          for (var i = 0; i < src_p1.length; ++i) {
+            result_33557338[i] = nimCopy(result_33557338[i], src_p1[i], ti_p2.base);
+          }
+        }
+      }
+    
+      break;
+    case 24:
+    case 27:
+            if (src_p1 === null) {
+        result_33557338 = null;
+      }
+      else {
+        if (dest_p0 === null || dest_p0 === undefined || dest_p0.length != src_p1.length) {
+          dest_p0 = new Array(src_p1.length);
+        }
+        result_33557338 = dest_p0;
+        for (var i = 0; i < src_p1.length; ++i) {
+          result_33557338[i] = nimCopy(result_33557338[i], src_p1[i], ti_p2.base);
+        }
+      }
+    
+      break;
+    case 28:
+            if (src_p1 !== null) {
+        result_33557338 = src_p1.slice(0);
+      }
+    
+      break;
+    default: 
+      result_33557338 = src_p1;
+      break;
+    }
+
+  return result_33557338;
+
+}
+
+function mnewString(len_p0) {
+        var result = new Array(len_p0);
+    for (var i = 0; i < len_p0; i++) {result[i] = 0;}
+    return result;
+  
+
+  
+}
+var objectID_721420466 = [0];
+
+function reset__js95file95nb67ode84o74s950_u27() {
+    Label1: {
+      var i_536870948 = 0;
+      var colontmp__536871146 = 0;
+      colontmp__536871146 = (lamps_536870934).length;
+      var i_536871147 = 0;
+      Label2: {
+          Label3: while (true) {
+          if (!(i_536871147 < colontmp__536871146)) break Label3;
+            i_536870948 = i_536871147;
+            lamps_536870934[i_536870948].classList.remove("go");
+            lamps_536870934[i_536870948].classList.remove("hold");
+            lamps_536870934[i_536870948].classList.remove("live");
+            i_536871147 += 1;
+          }
+      };
+    };
+
+  
+}
+
+function newSeq__system_u2524(len_p0) {
+  var result_33556960 = [];
+
+    result_33556960 = new Array(len_p0); for (var i = 0 ; i < len_p0 ; ++i) { result_33556960[i] = null; }
+  return result_33556960;
+
+}
+
+function isNimException__system_u2025() {
+    return lastJSError && lastJSError.m_type;
+
+  
+}
+
+function getCurrentException() {
+  var result_33556460 = null;
+
+    if (isNimException__system_u2025()) {
+    result_33556460 = lastJSError;
+    }
+    
+
+  return result_33556460;
+
+}
+
+function add__system_u1942(x_p0, x_p0_Idx, y_p1) {
+          if (x_p0[x_p0_Idx] === null) { x_p0[x_p0_Idx] = []; }
+      var off = x_p0[x_p0_Idx].length;
+      x_p0[x_p0_Idx].length += y_p1.length;
+      for (var i = 0; i < y_p1.length; ++i) {
+        x_p0[x_p0_Idx][off+i] = y_p1.charCodeAt(i);
+      }
+    
+
+  
+}
+
+function unhandledException(e_p0) {
+    var buf_33556666 = [[]];
+    if (!(((e_p0.message).length == 0))) {
+    buf_33556666[0].push.apply(buf_33556666[0], [69,114,114,111,114,58,32,117,110,104,97,110,100,108,101,100,32,101,120,99,101,112,116,105,111,110,58,32]);;
+    buf_33556666[0].push.apply(buf_33556666[0], e_p0.message);;
+    }
+    else {
+    buf_33556666[0].push.apply(buf_33556666[0], [69,114,114,111,114,58,32,117,110,104,97,110,100,108,101,100,32,101,120,99,101,112,116,105,111,110]);;
+    }
+    
+    buf_33556666[0].push.apply(buf_33556666[0], [32,91]);;
+    add__system_u1942(buf_33556666, 0, e_p0.name);
+    buf_33556666[0].push.apply(buf_33556666[0], [93,10]);;
+    var cbuf_33556667 = toJSStr(buf_33556666[0]);
+      if (typeof(Error) !== "undefined") {
+    throw new Error(cbuf_33556667);
+  }
+  else {
+    throw cbuf_33556667;
+  }
+  
+
+  
+}
+
+function raiseDefect() {
+    if (isNimException__system_u2025()) {
+    var e_33556672 = getCurrentException();
+    if (isObj(e_33556672.m_type, NTI33555172)) {
+    if ((excHandler == 0)) {
+    unhandledException(e_33556672);
+    }
+    
+    throw e_33556672;
+    }
+    
+    }
+    
+
+  
+}
+
+function say__js95file95nb67ode84o74s950_u25(html_p0) {
+    callout_536870935.innerHTML = toJSStr(html_p0);
+
+  
+}
+
+function HEX3Aanonymous__js95file95nb67ode84o74s950_u43() {
+    step__js95file95nb67ode84o74s950_u37((this.i0 + 1));
+
+  
+}
+
+function step__js95file95nb67ode84o74s950_u37(i_p0) {
+    var Temporary1;
+
+  BeforeRet: {
+    var HEX3Aenv_536871155 = null;
+    HEX3Aenv_536871155 = {m_type: NTI536871059, i0: 0};
+    HEX3Aenv_536871155.i0 = i_p0;
+    if ((0 < HEX3Aenv_536871155.i0)) {
+    lamps_536870934[(HEX3Aenv_536871155.i0 - 1)].classList.remove("live");
+    }
+    
+    if (((lamps_536870934).length <= HEX3Aenv_536871155.i0)) {
+    say__js95file95nb67ode84o74s950_u25(makeNimstrLit("<span class=\"k\">FLIGHT:</span> All consoles report go.<br><span class=\"allgo\">All systems Nim.</span>"));
+    running_536870936[0] = false;
+    break BeforeRet;
+    }
+    
+    var lamp_536870954 = lamps_536870934[HEX3Aenv_536871155.i0];
+    lamp_536870954.classList.add("live");
+    lamp_536870954.classList.add("go");
+    say__js95file95nb67ode84o74s950_u25(([60,115,112,97,110,32,99,108,97,115,115,61,34,107,34,62]).concat(cstrToNimstr(lamp_536870954.getAttribute("data-code")),[58,60,47,115,112,97,110,62,32],cstrToNimstr(lamp_536870954.getAttribute("data-call")),[32,60,98,62,71,111,46,60,47,98,62]));
+    Temporary1 = HEX3Aanonymous__js95file95nb67ode84o74s950_u43.bind(HEX3Aenv_536871155); Temporary1.ClP_0 = HEX3Aanonymous__js95file95nb67ode84o74s950_u43; Temporary1.ClE_0 = HEX3Aenv_536871155;
+    (setTimeout(Temporary1, 1300));
+  };
+
+  
+}
+
+function find__stdZenumutils_u55(a_p0, item_p1) {
+  var result_973078588 = 0;
+
+  BeforeRet: {
+    result_973078588 = 0;
+    Label1: {
+      var i_973078592 = [];
+      var i_536871194 = 0;
+      Label2: {
+          Label3: while (true) {
+          if (!(i_536871194 < (a_p0).length)) break Label3;
+            i_973078592 = a_p0[i_536871194];
+            if (eqStrings(i_973078592, item_p1)) {
+            break BeforeRet;
+            }
+            
+            result_973078588 += 1;
+            i_536871194 += 1;
+          }
+      };
+    };
+    result_973078588 = (-1);
+  };
+
+  return result_973078588;
+
+}
+
+function contains__stdZenumutils_u50(a_p0, item_p1) {
+  var result_973078582 = false;
+
+  BeforeRet: {
+    result_973078582 = (0 <= find__stdZenumutils_u55(a_p0, item_p1));
+    break BeforeRet;
+  };
+
+  return result_973078582;
+
+}
+
+function isFatPointer__system_u2886(ti_p0) {
+  var result_33557320 = false;
+
+  BeforeRet: {
+    result_33557320 = !((ConstSet1[ti_p0.base.kind] != undefined));
+    break BeforeRet;
+  };
+
+  return result_33557320;
+
+}
+
+function nimCopyAux(dest_p0, src_p1, n_p2) {
+    switch (n_p2.kind) {
+    case 0:
+      break;
+    case 1:
+            dest_p0[n_p2.offset] = nimCopy(dest_p0[n_p2.offset], src_p1[n_p2.offset], n_p2.typ);
+    
+      break;
+    case 2:
+          for (var i = 0; i < n_p2.sons.length; i++) {
+      nimCopyAux(dest_p0, src_p1, n_p2.sons[i]);
+    }
+    
+      break;
+    case 3:
+            dest_p0[n_p2.offset] = nimCopy(dest_p0[n_p2.offset], src_p1[n_p2.offset], n_p2.typ);
+      for (var i = 0; i < n_p2.sons.length; ++i) {
+        nimCopyAux(dest_p0, src_p1, n_p2.sons[i][1]);
+      }
+    
+      break;
+    }
+
+  
+}
+
+function addChars__stdZprivateZdigitsutils_u202(result_p0, result_p0_Idx, x_p1, start_p2, n_p3) {
+    var Temporary1;
+
+    var old_301990096 = (result_p0[result_p0_Idx]).length;
+    if (result_p0[result_p0_Idx].length < (Temporary1 = (old_301990096 + n_p3), Temporary1)) { for (var i = result_p0[result_p0_Idx].length; i < Temporary1; ++i) result_p0[result_p0_Idx].push(0); }
+         else {result_p0[result_p0_Idx].length = Temporary1; };
+    Label2: {
+      var iHEX60gensym4_301990110 = 0;
+      var i_536871200 = 0;
+      Label3: {
+          Label4: while (true) {
+          if (!(i_536871200 < n_p3)) break Label4;
+            iHEX60gensym4_301990110 = i_536871200;
+            result_p0[result_p0_Idx][(old_301990096 + iHEX60gensym4_301990110)] = x_p1.charCodeAt((start_p2 + iHEX60gensym4_301990110));
+            i_536871200 += 1;
+          }
+      };
+    };
+
+  
+}
+
+function addChars__stdZprivateZdigitsutils_u198(result_p0, result_p0_Idx, x_p1) {
+    addChars__stdZprivateZdigitsutils_u202(result_p0, result_p0_Idx, x_p1, 0, ((x_p1) == null ? 0 : (x_p1).length));
+
+  
+}
+
+function addInt__stdZprivateZdigitsutils_u223(result_p0, result_p0_Idx, x_p1) {
+    addChars__stdZprivateZdigitsutils_u198(result_p0, result_p0_Idx, ((x_p1) + ""));
+
+  
+}
+
+function addInt__stdZprivateZdigitsutils_u241(result_p0, result_p0_Idx, x_p1) {
+    addInt__stdZprivateZdigitsutils_u223(result_p0, result_p0_Idx, BigInt(x_p1));
+
+  
+}
+
+function HEX24__systemZdollars_u14(xHEX60gensym0_p0) {
+  var result_369098768 = [[]];
+
+    result_369098768[0] = nimCopy(null, [], NTI33554449);
+    addInt__stdZprivateZdigitsutils_u241(result_369098768, 0, xHEX60gensym0_p0);
+
+  return result_369098768[0];
+
+}
+var Temporary1;
+
+function HEX3Aanonymous__js95file95nb67ode84o74s950_u92(e_p0) {
+    var Temporary1;
+
+function HEX3Aanonymous__js95file95nb67ode84o74s950_u94() {
+    step__js95file95nb67ode84o74s950_u37(0);
+
+  
+}
+
+  BeforeRet: {
+    if (running_536870936[0]) {
+    break BeforeRet;
+    }
+    
+    running_536870936[0] = true;
+    reset__js95file95nb67ode84o74s950_u27();
+    say__js95file95nb67ode84o74s950_u25(makeNimstrLit("<span class=\"k\">FLIGHT:</span> All consoles, go/no-go for launch."));
+    Temporary1 = HEX3Aanonymous__js95file95nb67ode84o74s950_u94.bind(null); Temporary1.ClP_0 = HEX3Aanonymous__js95file95nb67ode84o74s950_u94; Temporary1.ClE_0 = null;
+    (setTimeout(Temporary1, 900));
+  };
+
+  
+}
+var Temporary2;
+
+function HEX3Aanonymous__js95file95nb67ode84o74s950_u127(e_p0) {
+  BeforeRet: {
+    if (running_536870936[0]) {
+    break BeforeRet;
+    }
+    
+    reset__js95file95nb67ode84o74s950_u27();
+    Label1: {
+      var i_536871048 = 0;
+      var colontmp__536871189 = 0;
+      colontmp__536871189 = (lamps_536870934).length;
+      var i_536871190 = 0;
+      Label2: {
+          Label3: while (true) {
+          if (!(i_536871190 < colontmp__536871189)) break Label3;
+            i_536871048 = i_536871190;
+            var code_536871049 = cstrToNimstr(lamps_536870934[i_536871048].getAttribute("data-code"));
+            if (contains__stdZenumutils_u50(holdCodes_536871038, code_536871049)) {
+            lamps_536870934[i_536871048].classList.add("hold");
+            }
+            else {
+            lamps_536870934[i_536871048].classList.add("go");
+            }
+            
+            i_536871190 += 1;
+          }
+      };
+    };
+    say__js95file95nb67ode84o74s950_u25(makeNimstrLit("<span class=\"k\">FLIGHT:</span> Amber is go, with a hold: it works, with a caveat the talk names. Green is clean go."));
+  };
+
+  
+}
+var Temporary3;
+
+function HEX3Aanonymous__js95file95nb67ode84o74s950_u167(e_p0) {
+    var txt_536871081 = document.getElementById("plain").textContent;
+    navigator.clipboard.writeText(txt_536871081);
+    document.getElementById("copy").textContent = "Copied";
+
+  
+}
+var lamps_536870934 = document.querySelectorAll(".lamp");
+var callout_536870935 = document.getElementById("callout");
+var running_536870936 = [false];
+Temporary1 = HEX3Aanonymous__js95file95nb67ode84o74s950_u92.bind(null); Temporary1.ClP_0 = HEX3Aanonymous__js95file95nb67ode84o74s950_u92; Temporary1.ClE_0 = null;
+document.getElementById("poll").addEventListener("click", Temporary1, false);
+Temporary2 = HEX3Aanonymous__js95file95nb67ode84o74s950_u127.bind(null); Temporary2.ClP_0 = HEX3Aanonymous__js95file95nb67ode84o74s950_u127; Temporary2.ClE_0 = null;
+document.getElementById("holds").addEventListener("click", Temporary2, false);
+var days_536871077 = ((Math.floor(((Date.UTC(2026, 10, 24) - Date.now()) / 86400000.0))) | 0);
+var tm_536871078 = document.getElementById("tminus");
+if ((0 <= days_536871077)) {
+tm_536871078.innerHTML = toJSStr(([84,45,77,73,78,85,83,32,60,98,62]).concat(HEX24__systemZdollars_u14(days_536871077),[60,47,98,62,32,68,65,89,83,32,84,79,32,67,70,80,32,67,76,79,83,69]));
+}
+else {
+  tm_536871078.innerHTML = toJSStr(([67,70,80,32,67,76,79,83,69,68,32,194,183,32,60,98,62,84,43]).concat(HEX24__systemZdollars_u14(-(days_536871077)),[60,47,98,62,32,68,65,89,83]));
+}
+
+Temporary3 = HEX3Aanonymous__js95file95nb67ode84o74s950_u167.bind(null); Temporary3.ClP_0 = HEX3Aanonymous__js95file95nb67ode84o74s950_u167; Temporary3.ClE_0 = null;
+document.getElementById("copy").addEventListener("click", Temporary3, false);
+
+</script>
+</main>
+<footer>
+<div class="nb-box">
+ <span><span class="nb-small">made with <a href="https://pietroppeter.github.io/nimib/">nimib 🐳</a></span></span>
+ <span></span>
+ <span><button class="nb-small" id="show" onclick="toggleSourceDisplay()">Show Source</button></span>
+</div>
+</footer>
+<section id="source">
+<pre><code class="nohighlight nim hljs"><span class="hljs-keyword">import</span> std/[json, os, strutils, strformat]
+<span class="hljs-keyword">import</span> nimib
+<span class="hljs-keyword">import</span> style
+
+nbInit
+<span class="hljs-comment"># write the page next to src/, wherever the build is run from</span>
+nb.doc.filename = currentSourcePath().parentDir.parentDir / <span class="hljs-string">&quot;index.html&quot;</span>
+nb.doc.context[<span class="hljs-string">&quot;title&quot;</span>] = %<span class="hljs-string">&quot;All Systems Nim · talk proposal flight plan&quot;</span>
+nb.doc.context[<span class="hljs-string">&quot;stylesheet&quot;</span>] = %pageStyle
+nb.doc.context[<span class="hljs-string">&quot;highlight&quot;</span>] = %<span class="hljs-string">&quot;&quot;</span>
+nb.doc.context[<span class="hljs-string">&quot;disableHighlightJs&quot;</span>] = %<span class="hljs-literal">true</span>
+<span class="hljs-keyword">func</span> pageHeader(blk: <span class="hljs-type">JsonNode</span>, nb: <span class="hljs-type">Nb</span>): <span class="hljs-built_in">string</span> =
+  <span class="hljs-string">&quot;&quot;&quot;&lt;header&gt;&lt;span&gt;Flight plan · a nimib notebook&lt;/span&gt;&lt;span&gt;FOSDEM 2027 · Open Source Systems Languages&lt;/span&gt;&lt;/header&gt;&quot;&quot;&quot;</span>
+nb.backend.partials[<span class="hljs-string">&quot;header&quot;</span>] = pageHeader
+
+<span class="hljs-comment"># ---------------------------------------------------------------- consoles</span>
+<span class="hljs-comment"># One row per console of the poll. Used for the board in the hero and for</span>
+<span class="hljs-comment"># the console section below; the board's script reads the data- attributes.</span>
+<span class="hljs-keyword">type</span> <span class="hljs-type">Console</span> = <span class="hljs-keyword">object</span>
+  code, name, short, call: <span class="hljs-built_in">string</span>
+
+<span class="hljs-keyword">const</span> consoles = [
+  <span class="hljs-type">Console</span>(code: <span class="hljs-string">&quot;BOOSTER&quot;</span>, name: <span class="hljs-string">&quot;Bare metal&quot;</span>, short: <span class="hljs-string">&quot;kernels, firmware, tiny binaries&quot;</span>,
+          call: <span class="hljs-string">&quot;Compiles to C, no VM, no mandatory runtime. Kernels, firmware and handhelds.&quot;</span>),
+  <span class="hljs-type">Console</span>(code: <span class="hljs-string">&quot;EECOM&quot;</span>, name: <span class="hljs-string">&quot;Life support&quot;</span>, short: <span class="hljs-string">&quot;memory: ARC/ORC, destructors&quot;</span>,
+          call: <span class="hljs-string">&quot;Deterministic destructors and move semantics. No stop-the-world collector.&quot;</span>),
+  <span class="hljs-type">Console</span>(code: <span class="hljs-string">&quot;GUIDO&quot;</span>, name: <span class="hljs-string">&quot;Guidance&quot;</span>, short: <span class="hljs-string">&quot;macros and compile time&quot;</span>,
+          call: <span class="hljs-string">&quot;Templates, macros and a compile-time VM. The language bends to the domain.&quot;</span>),
+  <span class="hljs-type">Console</span>(code: <span class="hljs-string">&quot;FIDO&quot;</span>, name: <span class="hljs-string">&quot;Flight dynamics&quot;</span>, short: <span class="hljs-string">&quot;C, C++, ObjC and JS backends&quot;</span>,
+          call: <span class="hljs-string">&quot;One codebase, four backends. Native at build time, JavaScript in the browser.&quot;</span>),
+  <span class="hljs-type">Console</span>(code: <span class="hljs-string">&quot;RETRO&quot;</span>, name: <span class="hljs-string">&quot;Docking&quot;</span>, short: <span class="hljs-string">&quot;interop both ways&quot;</span>,
+          call: <span class="hljs-string">&quot;importc in, exportc out. Rust through the C ABI, plugins loaded by Python.&quot;</span>),
+  <span class="hljs-type">Console</span>(code: <span class="hljs-string">&quot;INCO&quot;</span>, name: <span class="hljs-string">&quot;Compiler&quot;</span>, short: <span class="hljs-string">&quot;HCR, IC, NimScript, Nimony&quot;</span>,
+          call: <span class="hljs-string">&quot;The compiler is a platform: hot code reloading, incremental compilation.&quot;</span>),
+  <span class="hljs-type">Console</span>(code: <span class="hljs-string">&quot;SURGEON&quot;</span>, name: <span class="hljs-string">&quot;Crew health&quot;</span>, short: <span class="hljs-string">&quot;low cognitive load&quot;</span>,
+          call: <span class="hljs-string">&quot;Reads like Python, checked like Ada. Easy on humans, easy on agents.&quot;</span>),
+  <span class="hljs-type">Console</span>(code: <span class="hljs-string">&quot;CAPCOM&quot;</span>, name: <span class="hljs-string">&quot;The crew&quot;</span>, short: <span class="hljs-string">&quot;people and whimsy&quot;</span>,
+          call: <span class="hljs-string">&quot;A browser from scratch, e-ink frames, games, a wordoku. People fly it.&quot;</span>),
+]
+
+<span class="hljs-keyword">proc</span> boardHtml(): <span class="hljs-built_in">string</span> =
+  <span class="hljs-literal">result</span> = <span class="hljs-string">&quot;&quot;&quot;&lt;div class=&quot;console&quot; id=&quot;board&quot;&gt;&lt;div class=&quot;bar&quot;&gt;&lt;span&gt;MISSION CONTROL · NIM-1 · GO/NO-GO POLL&lt;/span&gt;&quot;&quot;&quot;</span> &amp;
+    <span class="hljs-string">&quot;&quot;&quot;&lt;span class=&quot;tminus&quot; id=&quot;tminus&quot;&gt;T-MINUS &lt;b&gt;--&lt;/b&gt; DAYS TO CFP CLOSE&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;lamps&quot;&gt;&quot;&quot;&quot;</span>
+  <span class="hljs-keyword">for</span> c <span class="hljs-keyword">in</span> consoles:
+    <span class="hljs-literal">result</span>.add &amp;<span class="hljs-string">&quot;&quot;&quot;&lt;div class=&quot;lamp&quot; data-code=&quot;{c.code}&quot; data-call=&quot;{c.call}&quot;&gt;&lt;i&gt;&lt;/i&gt;&lt;b&gt;{c.code}&lt;/b&gt;&lt;span&gt;{c.name}&lt;/span&gt;&lt;/div&gt;&quot;&quot;&quot;</span>
+  <span class="hljs-literal">result</span>.add <span class="hljs-string">&quot;&quot;&quot;&lt;/div&gt;&lt;div class=&quot;callout&quot; id=&quot;callout&quot;&gt;FLIGHT: Stand by for the go/no-go poll.&lt;/div&gt;&quot;&quot;&quot;</span> &amp;
+    <span class="hljs-string">&quot;&quot;&quot;&lt;div style=&quot;display:flex;gap:8px;margin-top:10px;flex-wrap:wrap&quot;&gt;&lt;button id=&quot;poll&quot;&gt;▶ Poll the consoles&lt;/button&gt;&quot;&quot;&quot;</span> &amp;
+    <span class="hljs-string">&quot;&quot;&quot;&lt;button class=&quot;alt&quot; id=&quot;holds&quot;&gt;Show holds&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;&quot;&quot;&quot;</span>
+
+<span class="hljs-comment"># ---------------------------------------------------------------- hero</span>
+nbRawHtml: <span class="hljs-string">&quot;&quot;&quot;
+&lt;h1&gt;All Systems &lt;span class=&quot;nim&quot;&gt;Nim&lt;/span&gt;&lt;/h1&gt;
+&lt;p class=&quot;lede&quot;&gt;A flight plan for a FOSDEM talk: what Nim is as a systems language, what it can do from kernels to word puzzles,
+and seven ways to tell it in 25 minutes. Ends with a proposal ready to paste into the CfP form.&lt;/p&gt;
+&lt;span class=&quot;stamp&quot;&gt;DRAFT · REV 1 · 7 NOV 2026&lt;/span&gt;
+&quot;&quot;&quot;</span> &amp; boardHtml()
+
+nbText: <span class="hljs-string">&quot;&quot;&quot;
+The board above is the talk in miniature. Before a launch, the flight director polls every console of mission control
+and each one answers *go* or *no-go*. Press **Poll the consoles** to run the poll on Nim: eight consoles,
+eight things Nim brings to systems programming. **Show holds** lights the consoles where the honest answer
+is &quot;go, with a hold&quot;. The board's script is Nim, compiled to JavaScript by this page.
+&quot;&quot;&quot;</span>
+
+<span class="hljs-comment"># ---------------------------------------------------------------- 1 the phrase</span>
+nbRawHtml: <span class="hljs-string">&quot;&quot;&quot;&lt;h2&gt;&lt;span class=&quot;t&quot;&gt;T-10 · THE PHRASE&lt;/span&gt;Cabin pressure go&lt;/h2&gt;&quot;&quot;&quot;</span>
+
+nbRawHtml: <span class="hljs-string">&quot;&quot;&quot;
+&lt;div class=&quot;transcript&quot;&gt;
+&lt;div&gt;&lt;span class=&quot;who&quot;&gt;FREEDOM 7&lt;/span&gt;Cabin pressure go.&lt;/div&gt;
+&lt;div&gt;&lt;span class=&quot;who&quot;&gt;&lt;/span&gt;Fuel system go.&lt;/div&gt;
+&lt;div&gt;&lt;span class=&quot;who&quot;&gt;&lt;/span&gt;Oxygen go.&lt;/div&gt;
+&lt;div&gt;&lt;span class=&quot;who&quot;&gt;&lt;/span&gt;&lt;b&gt;All systems go.&lt;/b&gt;&lt;/div&gt;
+&lt;div class=&quot;src&quot;&gt;Alan Shepard, Mercury-Redstone 3, 5 May 1961, as retold by
+&lt;a href=&quot;https://grammarist.com/idiom/all-systems-go/&quot;&gt;Grammarist&lt;/a&gt; and
+&lt;a href=&quot;https://www.phrases.org.uk/meanings/all-systems-go.html&quot;&gt;phrases.org.uk&lt;/a&gt;, which credit the flight transcript.
+The &lt;a href=&quot;https://mercury3.spacelog.org/page/PAO&quot;&gt;Spacelog transcript&lt;/a&gt; of the flight is the place to check the exact words before a slide.
+Not to be mixed up with &quot;A-OK&quot;, which NASA's PAO John &quot;Shorty&quot; Powers attributed to Shepard and the tapes later showed he never said.&lt;/div&gt;
+&lt;/div&gt;
+&quot;&quot;&quot;</span>
+
+nbText: <span class="hljs-string">&quot;&quot;&quot;
+&quot;All systems go&quot; means every check is done and you can proceed without delay. It comes from the countdowns of
+the American space program, and it left aerospace to become everyday language for launches of any kind.
+
+It fits this talk three times over:
+
+1. **A launch.** FOSDEM 2027 has a brand new devroom for *non-mainstream* systems languages, and Nim is named in its call.
+   There is no Nim devroom in the 2027 list, so this room is where Nim lives this year.
+2. **A poll of systems.** A systems language is many systems working together: memory, compiler, backends, interop.
+   Mission control polls each console in turn, and a talk can do the same. Each console is one capability, a demo and a verdict.
+3. **Honesty.** A console can answer *no-go*, or call a *hold*. The scientific Nim talk had &quot;rocks ahead&quot;
+   at the end of each island; here the same honesty has a better name.
+
+Title: **All Systems Nim**. The pun works when read aloud (&quot;all systems go&quot; with one sound changed) and
+says the thesis: every system is there, and it is Nim all the way down.
+&quot;&quot;&quot;</span>
+
+<span class="hljs-comment"># ---------------------------------------------------------------- 2 the room</span>
+nbRawHtml: <span class="hljs-string">&quot;&quot;&quot;&lt;h2&gt;&lt;span class=&quot;t&quot;&gt;T-09 · THE LAUNCH SITE&lt;/span&gt;The devroom&lt;/h2&gt;&quot;&quot;&quot;</span>
+
+nbRawHtml: <span class="hljs-string">&quot;&quot;&quot;
+&lt;div class=&quot;facts&quot;&gt;
+&lt;div&gt;&lt;b&gt;Room&lt;/b&gt;Open Source Systems Languages (new in 2027)&lt;/div&gt;
+&lt;div&gt;&lt;b&gt;When&lt;/b&gt;Sunday 31 January 2027, afternoon&lt;/div&gt;
+&lt;div&gt;&lt;b&gt;Slots&lt;/b&gt;25 or 45 minutes (say which in the submission)&lt;/div&gt;
+&lt;div&gt;&lt;b&gt;CfP closes&lt;/b&gt;23 November 2026&lt;/div&gt;
+&lt;div&gt;&lt;b&gt;Speakers told&lt;/b&gt;1 December · schedule 7 December&lt;/div&gt;
+&lt;div&gt;&lt;b&gt;Submit at&lt;/b&gt;&lt;a href=&quot;https://fosdem.org/submit&quot;&gt;fosdem.org/submit&lt;/a&gt;, track &quot;Open Source Systems Languages&quot;&lt;/div&gt;
+&lt;div&gt;&lt;b&gt;Organizers&lt;/b&gt;Jose E. Marchesi, Iain Buclaw, Sergei Giniatulin, Mike Shah&lt;/div&gt;
+&lt;div&gt;&lt;b&gt;Named languages&lt;/b&gt;D, Odin, C3, Lobster, Zig, Nim&lt;/div&gt;
+&lt;/div&gt;
+&quot;&quot;&quot;</span>
+
+nbText: <span class="hljs-string">&quot;&quot;&quot;
+From the [devroom page](https://mikeshah.github.io/fosdem27-ossl-devroom/): a place to &quot;geek out about awesome
+non-mainstream programming languages&quot;. A non-mainstream systems language &quot;allows low level programming, and is not
+a 'top-20' language on the TIOBE index&quot;. The audience doesn't care about popularity: they &quot;want to do great engineering
+and are going to choose the right open source tool to get the work done&quot;. Suggested topics: adoption at your company,
+how language design trade-offs helped you, or a cool project you built.
+
+What this tells us about the audience:
+
+- They already like at least one odd language (D, Zig, Odin, C3). They don't need convincing that a small language
+  can be good; they want to know **what is different about this one**.
+- &quot;Systems&quot; is in the room name, so the talk must show low-level credentials early, before the whimsy.
+- The room invites design trade-offs. Talking about Nim's choices (and their costs) is on topic, not a detour.
+- The neighbours will be D, Zig and Odin people. Comparisons should be trade-offs, not a contest, as in the
+  scientific talk.
+&quot;&quot;&quot;</span>
+
+<span class="hljs-comment"># ---------------------------------------------------------------- 3 telemetry</span>
+nbRawHtml: <span class="hljs-string">&quot;&quot;&quot;&lt;h2&gt;&lt;span class=&quot;t&quot;&gt;T-08 · TELEMETRY&lt;/span&gt;What we have to work with&lt;/h2&gt;&quot;&quot;&quot;</span>
+
+nbText: <span class="hljs-string">&quot;&quot;&quot;
+### The sister talk
+
+[Sailing Seas of Scientific Nim](https://github.com/pietroppeter/talk-sailing-seas-scientific-nim) is at
+Compute! Paris on 26 November 2026, three days after this CfP closes. Its shape is a template for this one:
+
+- a **metaphor** carrying the whole talk (a sea voyage, seven islands),
+- **no tutorial**: Nim reads like Python, so examples stand on their own,
+- **success stories** of other people before your own work,
+- an honest **&quot;rocks ahead&quot;** line at the end of each island,
+- a nimib **explainer page** behind each slide for the curious,
+- prepared **spec-driven**, with OpenSpec and a custom `talk` schema.
+
+The same moves apply here with a different domain: from scientific computing to systems programming. The
+islands become consoles, the rocks become holds, the voyage becomes a countdown.
+
+### The recent experiments
+
+These are all from the last few weeks, most built with a coding agent and planned with OpenSpec.
+Each one shows a different systems feature, which is what makes them good talk material.
+&quot;&quot;&quot;</span>
+
+nbText: <span class="hljs-string">&quot;&quot;&quot;
+| Project | What it is | The systems feature it shows |
+|---|---|---|
+| [nanuq](https://github.com/pietroppeter/nanuq) | Polars DataFrames for Nim, 116 of 128 Polars feature groups | A Rust crate exports a C ABI; Nim calls it with `importc` and frees Rust-heap objects in `=destroy`. Rust panics come back as Nim exceptions. |
+| [nanuq-more](https://github.com/pietroppeter/nanuq-more) | Polars expression plugins written in Nim | The Polars plugin ABI (Arrow C data interface) in pure Nim; one `{.polarsExpr.}` macro; the same shared library loads in Nanuq **and in Python Polars**. Built with `uv` and `zig cc`. |
+| [nanuqy](https://github.com/pietroppeter/nanuqy) | Just started: replace the Rust half of nanuq | Nimony (the next Nim compiler) and NIF. |
+| [cicak](https://github.com/pietroppeter/cicak) | A REPL for Nim (research) | Each input is a module, loaded into a live process with hot code reloading; incremental compilation (Nim 2.4) keeps each step cheap. The compiler as a platform. |
+| [cadero](https://github.com/pietroppeter/cadero) | A mini CAD to design panel furniture (a real wall unit with a bed niche) | Same model code native (drawings, cut list) and in the browser (3D viewer compiled to JS). |
+| [parloku](https://github.com/pietroppeter/parloku) | A wordoku game with a puzzle builder | A nimib notebook compiled to JavaScript; drag and drop by &quot;declarative dragging&quot;. |
+| [zogyn](https://github.com/pietroppeter/zogyn) | Declarative dragging as a library | The engine is tested natively and runs in the browser, unchanged. |
+| [playdate-nim](https://github.com/pietroppeter/playdate-nim-emilia) experiments | Small games for the Playdate handheld | An ARM microcontroller target with a C SDK. |
+| [nimib](https://github.com/pietroppeter/nimib) | The notebook library this page is written in | Runs code at build time, ships JS compiled from the same file. |
+&quot;&quot;&quot;</span>
+
+nbText: <span class="hljs-string">&quot;&quot;&quot;
+### Other people's systems
+
+The scientific talk's [beyond-science explainer](https://pietroppeter.github.io/talk-sailing-seas-scientific-nim/island2_beyond_explainer.html)
+already collects many of these. The ones that answer &quot;can Nim do real systems work?&quot;:
+
+| Domain | Project | Why it counts |
+|---|---|---|
+| Kernels | [Fusion OS](https://github.com/khaledh/fusion) (khaledh) | A hobby x86-64 OS in Nim, with a [write-up](https://0xc0ffee.netlify.app/osdev/01-intro) from boot to user space. |
+| Browsers | [Chawan](https://sr.ht/~bptato/chawan/) (bptato) | A terminal web browser written from scratch: its own HTML and CSS engine, JavaScript through QuickJS. |
+| E-ink | [FrameOS](https://github.com/FrameOS) | An OS for single-function smart frames and e-ink displays, apps compiled with Nim. |
+| Embedded | [Ratel](https://github.com/PMunch/ratel) (PMunch), [playdate-nim](https://github.com/samdze/playdate-nim), INGCHIPS BLE SDK | Microcontrollers with zero-cost abstractions; a vendor SDK that lists Nim next to C. |
+| GUI | [owlkettle](https://github.com/can-lehmann/owlkettle) (GTK 4), [Figuro](https://github.com/elcritch/figuro), Status Desktop (Qt) | A declarative GUI DSL built with macros; a desktop messenger shipping on three OSes. |
+| Games | [naylib](https://github.com/planetis-m/naylib), Turing Complete (Godot + Nim), [NimForUE](https://github.com/jmgomez/NimForUE) | A game on Steam; Unreal Engine 5 with hot reloading. |
+| Infrastructure | [Nimbus](https://github.com/status-im/nimbus-eth2), [Constantine](https://github.com/mratsim/constantine) | An Ethereum consensus client light enough for a Raspberry Pi; constant-time cryptography. |
+| Compilers | [nlvm](https://github.com/arnetheduck/nlvm), Nimony | An LLVM backend with a JIT REPL; the next Nim compiler. |
+
+Before the talk, check each claim and its date with the project: these are from memory and from the Paris explainer.
+&quot;&quot;&quot;</span>
+
+<span class="hljs-comment"># ---------------------------------------------------------------- 4 what is a system</span>
+nbRawHtml: <span class="hljs-string">&quot;&quot;&quot;&lt;h2&gt;&lt;span class=&quot;t&quot;&gt;T-07 · SYSTEMS THINKING&lt;/span&gt;What is a system, anyway?&lt;/h2&gt;&quot;&quot;&quot;</span>
+
+nbText: <span class="hljs-string">&quot;&quot;&quot;
+The prompt for this talk asks it directly: *what is systems thinking, after all?* Three answers, each good for one slide.
+
+**The 1998 split.** In &quot;Scripting: Higher Level Programming for the 21st Century&quot; (IEEE Computer, 1998), John Ousterhout
+split languages in two: *system programming languages* (C, C++, Java), typed and compiled, for building data structures
+and algorithms from scratch; and *scripting languages* (Tcl, Perl, Python), for gluing components together quickly.
+You pick one side and pay its price. Most &quot;non-mainstream systems languages&quot; in this devroom are attempts to refuse
+that choice. Nim's tagline says it plainly: a statically typed compiled systems language with concepts from Python,
+Ada and Modula, aiming to be *efficient, expressive, elegant*.
+
+**The systems-thinking definition.** Donella Meadows, in *Thinking in Systems*: a system is a set of elements, interconnected
+so that together they achieve a purpose. Look at a language that way and the question changes. Not &quot;can it touch
+the metal?&quot; but &quot;how do its parts work together?&quot; In Nim the macros, the type system, the destructors and the backends are
+not separate features. A macro writes code the type checker checks, which the destructors manage, which any backend can emit.
+`{.polarsExpr.}` in nanuq-more is a good example: one macro turns a plain Nim proc into a C ABI function with Arrow buffers,
+and on the JS backend the same macro does nothing, so the module runs in a browser too.
+
+**The human in the loop.** The part of a system people forget is the operator. Cognitive load is a systems property:
+a language that fits in your head lets you hold more of the *rest* of the system in it. The 2026 version of this
+argument has a new operator: the coding agent. A language with little syntax, one obvious way to build, readable code
+and a fast, strict compiler gives an agent the same thing it gives a human: short feedback loops and fewer places to be wrong.
+Most of the experiments above were written that way.
+
+The talk's thesis, in one sentence:
+
+&gt; Nim is a systems language because its parts form a system: low-level control, a high ceiling and a low cognitive load,
+&gt; held together by a compiler you can program. That is why it is good at kernels **and** at word puzzles.
+&quot;&quot;&quot;</span>
+
+<span class="hljs-comment"># ---------------------------------------------------------------- 5 consoles</span>
+nbRawHtml: <span class="hljs-string">&quot;&quot;&quot;&lt;h2&gt;&lt;span class=&quot;t&quot;&gt;T-06 · THE CONSOLES&lt;/span&gt;The poll, console by console&lt;/h2&gt;&quot;&quot;&quot;</span>
+
+nbText: <span class="hljs-string">&quot;&quot;&quot;
+This is the material for the main body of the recommended talk. Each console is one capability, with one community example,
+one example from the recent experiments, and a hold where there is one. A couple of consoles have code that ran
+when this page was built.
+&quot;&quot;&quot;</span>
+
+<span class="hljs-keyword">proc</span> station(c: <span class="hljs-type">Console</span>, body: <span class="hljs-built_in">string</span>, hold = <span class="hljs-string">&quot;&quot;</span>): <span class="hljs-built_in">string</span> =
+  <span class="hljs-literal">result</span> = &amp;<span class="hljs-string">&quot;&quot;&quot;&lt;div class=&quot;station&quot;&gt;&lt;div class=&quot;hd&quot;&gt;&lt;i&gt;&lt;/i&gt;&lt;b&gt;{c.code}&lt;/b&gt;&lt;span&gt;{c.name}&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;bd&quot;&gt;{body}&quot;&quot;&quot;</span>
+  <span class="hljs-keyword">if</span> hold.len &gt; <span class="hljs-number">0</span>: <span class="hljs-literal">result</span>.add &amp;<span class="hljs-string">&quot;&quot;&quot;&lt;div class=&quot;hold&quot;&gt;{hold}&lt;/div&gt;&quot;&quot;&quot;</span>
+  <span class="hljs-literal">result</span>.add <span class="hljs-string">&quot;&lt;/div&gt;&lt;/div&gt;&quot;</span>
+
+nbRawHtml: station(consoles[<span class="hljs-number">0</span>], <span class="hljs-string">&quot;&quot;&quot;
+&lt;p&gt;Nim compiles to C (or C++, or Objective-C) and then to machine code with the C compiler you already trust.
+No virtual machine, no mandatory runtime, binaries in the tens of kilobytes. You can turn the GC off, write
+&lt;code&gt;ptr&lt;/code&gt; and &lt;code&gt;cast&lt;/code&gt;, and target anything with a C toolchain.&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;Community:&lt;/b&gt; Fusion OS boots on x86-64; Ratel runs on AVR microcontrollers; INGCHIPS lists Nim in its BLE SDK.
+&lt;b&gt;Lab:&lt;/b&gt; Playdate games through playdate-nim.&lt;/p&gt;&quot;&quot;&quot;</span>)
+
+nbRawHtml: station(consoles[<span class="hljs-number">1</span>], <span class="hljs-string">&quot;&quot;&quot;
+&lt;p&gt;Since Nim 2.0 the default memory management is ORC: reference counting with move semantics and a cycle collector,
+so memory is freed at a predictable point, with no stop-the-world pauses. You can write your own &lt;code&gt;=destroy&lt;/code&gt;,
+&lt;code&gt;=copy&lt;/code&gt; and &lt;code&gt;=sink&lt;/code&gt; hooks. nanuq uses them to own objects that live on the Rust heap:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;nohighlight&quot;&gt;proc `=destroy`(x: DataFrameObj) =
+  if x.raw != nil: nq_df_free(x.raw)
+
+proc `=copy`(a: var DataFrameObj, b: DataFrameObj) {.error.}   # no accidental copies&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;That is RAII across a language boundary, in three lines. &lt;b&gt;Community:&lt;/b&gt; Nimbus runs an Ethereum node on a Raspberry Pi.&lt;/p&gt;&quot;&quot;&quot;</span>,
+  <span class="hljs-string">&quot;ORC's cycle collector and multithreading took years to settle; older libraries and tutorials still assume refc.&quot;</span>)
+
+nbRawHtml: station(consoles[<span class="hljs-number">2</span>], <span class="hljs-string">&quot;&quot;&quot;
+&lt;p&gt;Templates, hygienic macros over the typed AST, and a VM that runs ordinary Nim at compile time. Libraries
+grow their own syntax without a separate code generator. In nanuq, a dataframe is a block:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;nohighlight&quot;&gt;let bears = newDataFrame:
+  name: [&quot;Nanuq&quot;, &quot;Siku&quot;, &quot;Ursa&quot;, &quot;Kallik&quot;]
+  island: [&quot;Svalbard&quot;, &quot;Svalbard&quot;, &quot;Wrangel&quot;, &quot;Wrangel&quot;]
+  kg: [420, 95, 380, nil]                # nil is a missing value&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Below, a macro written for this page runs the poll. The strings are put together by the compiler;
+the program only prints them.&lt;/p&gt;&quot;&quot;&quot;</span>)
+
+nbCode:
+  <span class="hljs-keyword">import</span> std/macros
+
+  <span class="hljs-keyword">func</span> spoken(id: <span class="hljs-built_in">string</span>): <span class="hljs-built_in">string</span> =
+    <span class="hljs-comment">## cabinPressure -&gt; &quot;Cabin pressure&quot;</span>
+    <span class="hljs-keyword">for</span> i, ch <span class="hljs-keyword">in</span> id:
+      <span class="hljs-keyword">if</span> ch.isUpperAscii: <span class="hljs-literal">result</span>.add <span class="hljs-string">' '</span>
+      <span class="hljs-literal">result</span>.add(<span class="hljs-keyword">if</span> i == <span class="hljs-number">0</span>: ch.toUpperAscii <span class="hljs-keyword">else</span>: ch.toLowerAscii)
+
+  <span class="hljs-keyword">macro</span> poll(systems: <span class="hljs-built_in">varargs</span>[<span class="hljs-built_in">untyped</span>]): <span class="hljs-built_in">untyped</span> =
+    <span class="hljs-literal">result</span> = newStmtList()
+    <span class="hljs-keyword">for</span> s <span class="hljs-keyword">in</span> systems:
+      <span class="hljs-keyword">let</span> line = spoken(s.strVal) &amp; <span class="hljs-string">&quot; go.&quot;</span>   <span class="hljs-comment"># runs inside the compiler</span>
+      <span class="hljs-literal">result</span>.add quote <span class="hljs-keyword">do</span>: <span class="hljs-keyword">echo</span> `line`
+    <span class="hljs-literal">result</span>.add quote <span class="hljs-keyword">do</span>: <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;All systems go.&quot;</span>
+
+  poll cabinPressure, fuelSystem, oxygen
+
+nbRawHtml: <span class="hljs-string">&quot;&quot;&quot;&lt;div class=&quot;small&quot; style=&quot;margin:-4px 0 20px&quot;&gt;The macro's output, as the compiler sees it, is just
+&lt;code&gt;echo &quot;Cabin pressure go.&quot;&lt;/code&gt; three times and a last line. &lt;b&gt;Community:&lt;/b&gt; owlkettle builds GTK 4 apps from a declarative
+macro DSL; Karax does the same for the web.&lt;/div&gt;&quot;&quot;&quot;</span>
+
+nbRawHtml: station(consoles[<span class="hljs-number">3</span>], <span class="hljs-string">&quot;&quot;&quot;
+&lt;p&gt;The same source compiles to C, C++, Objective-C and JavaScript, and NimScript runs it in the compiler's VM.
+That is not a gimmick for the web: it is how cadero draws its plans natively and shows a 3D viewer in the browser
+from the same model, how zogyn tests its drag engine natively and ships it to the browser unchanged, and how the board at
+the top of this page works.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;nohighlight&quot;&gt;nim c   -d:release app.nim     # C, then your C compiler
+nim cpp app.nim                # C++: talk to C++ libraries, Unreal, Qt
+nim objc app.nim               # Objective-C: talk to Apple frameworks
+nim js  app.nim                # JavaScript: the browser
+nim e   build.nims             # NimScript: the compiler's VM&lt;/code&gt;&lt;/pre&gt;&quot;&quot;&quot;</span>,
+  <span class="hljs-string">&quot;The JS backend is a different world: no threads, no C FFI, and some stdlib modules don't exist there.&quot;</span>)
+
+nbRawHtml: station(consoles[<span class="hljs-number">4</span>], <span class="hljs-string">&quot;&quot;&quot;
+&lt;p&gt;Nim speaks the C ABI in both directions. &lt;code&gt;importc&lt;/code&gt; calls anything with a C interface, including Rust
+that exports one: that is all of nanuq. &lt;code&gt;exportc&lt;/code&gt; and &lt;code&gt;--app:lib&lt;/code&gt; go the other way:
+nanuq-more builds a shared library that Python Polars loads as a plugin, from plain Nim procs:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;nohighlight&quot;&gt;proc isoweek*(d: Date32): IsoWeek {.polarsExpr.} =
+  ...   # plain Nim; the pragma also exports it to Polars&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;b&gt;Community:&lt;/b&gt; nimpy (Python both ways), godot-nim, NimForUE, wrappers generated by Futhark from C headers.&lt;/p&gt;&quot;&quot;&quot;</span>,
+  <span class="hljs-string">&quot;nanuq's Rust half is a ~286 MB static library (53 MB download). Interop is easy; distribution is the hard part. nanuqy is the experiment to drop it.&quot;</span>)
+
+nbRawHtml: station(consoles[<span class="hljs-number">5</span>], <span class="hljs-string">&quot;&quot;&quot;
+&lt;p&gt;The compiler is a library and a platform: NimScript for build files, hot code reloading (each module a shared library,
+globals survive reloads), and incremental compilation in Nim 2.4. cicak puts the last two together to try a real REPL:
+each input becomes a module, loaded into a live process. Nimony, the next compiler, works on NIF, a text format for
+the compiler's intermediate code that other tools can read and write.&lt;/p&gt;&quot;&quot;&quot;</span>,
+  <span class="hljs-string">&quot;Hot code reloading is rough (main module not reloadable, leaks under ORC, tested only without threads); 2.4.0 shipped without a tool that IC needs. Nimony means a transition ahead.&quot;</span>)
+
+nbRawHtml: station(consoles[<span class="hljs-number">6</span>], <span class="hljs-string">&quot;&quot;&quot;
+&lt;p&gt;Nim reads like Python: indentation, few symbols, type inference, uniform call syntax. It checks like Ada: distinct types,
+range types, effects, exhaustive &lt;code&gt;case&lt;/code&gt;. There is one main way to build. That makes it light to read, which
+matters for humans maintaining code and for agents writing it: a strict compiler with clear errors is the best reviewer
+an agent can get. Every experiment in the lab table was built with an agent, spec first, in a few days.&lt;/p&gt;&quot;&quot;&quot;</span>,
+  <span class="hljs-string">&quot;Models have seen far less Nim than Python or Rust: they drift to old APIs and invent procs. Specs, tests and a fast compiler catch it, but the friction is real.&quot;</span>)
+
+nbRawHtml: station(consoles[<span class="hljs-number">7</span>], <span class="hljs-string">&quot;&quot;&quot;
+&lt;p&gt;A language is its people. A web browser from scratch, e-ink photo frames, a kernel tutorial, a game on Steam,
+an Ethereum client. And the whimsical: a wordoku you play by dragging tiles, a CAD drawn for one wall of one flat,
+animated explainers, a notebook library that writes pages like this one.&lt;/p&gt;&quot;&quot;&quot;</span>,
+  <span class="hljs-string">&quot;A small community with a short bench: when a key maintainer gets busy, a library stops. Package tooling (nimble, atlas) has been in flux.&quot;</span>)
+
+<span class="hljs-comment"># ---------------------------------------------------------------- 6 approaches</span>
+nbRawHtml: <span class="hljs-string">&quot;&quot;&quot;&lt;h2&gt;&lt;span class=&quot;t&quot;&gt;T-05 · MISSION PROFILES&lt;/span&gt;Seven ways to fly this talk&lt;/h2&gt;&quot;&quot;&quot;</span>
+
+nbText: <span class="hljs-string">&quot;&quot;&quot;
+Same payload, different flight plans. Each one could carry the thesis; they differ in how much they demo, how personal
+they are and how they answer &quot;but is it really systems?&quot;. Times are for a 25-minute slot.
+&quot;&quot;&quot;</span>
+
+<span class="hljs-keyword">proc</span> mission(letter, title, meta, body, pros, cons: <span class="hljs-built_in">string</span>, pick = <span class="hljs-literal">false</span>): <span class="hljs-built_in">string</span> =
+  <span class="hljs-keyword">let</span> cls = <span class="hljs-keyword">if</span> pick: <span class="hljs-string">&quot;mission pick&quot;</span> <span class="hljs-keyword">else</span>: <span class="hljs-string">&quot;mission&quot;</span>
+  &amp;<span class="hljs-string">&quot;&quot;&quot;&lt;div class=&quot;{cls}&quot;&gt;&lt;div class=&quot;patch&quot;&gt;{letter}&lt;/div&gt;&lt;h3&gt;{title}&lt;/h3&gt;&lt;div class=&quot;meta&quot;&gt;{meta}&lt;/div&gt;{body}&lt;div class=&quot;pros&quot;&gt;{pros}&lt;/div&gt;&lt;div class=&quot;cons&quot;&gt;{cons}&lt;/div&gt;&lt;/div&gt;&quot;&quot;&quot;</span>
+
+nbRawHtml: <span class="hljs-string">&quot;&quot;&quot;&lt;div class=&quot;missions&quot;&gt;&quot;&quot;&quot;</span> &amp;
+  mission(<span class="hljs-string">&quot;A&quot;</span>, <span class="hljs-string">&quot;The go/no-go poll&quot;</span>, <span class="hljs-string">&quot;&lt;em&gt;recommended&lt;/em&gt;&lt;em&gt;25′ or 45′&lt;/em&gt;&lt;em&gt;demo: medium&lt;/em&gt;&quot;</span>,
+    <span class="hljs-string">&quot;&lt;p&gt;Open with the Freedom 7 checks. The flight director polls eight consoles (the ones above); each answers with a capability, &quot;</span> &amp;
+    <span class="hljs-string">&quot;a community example, an example from the lab and a verdict: go, or go with a hold. Close with the holds summed up and </span><span class="hljs-meta">\&quot;</span><span class="hljs-string">all systems Nim</span><span class="hljs-meta">\&quot;</span><span class="hljs-string">.&lt;/p&gt;&quot;</span>,
+    <span class="hljs-string">&quot;The same skeleton as the Paris talk (islands become consoles, rocks become holds), so the preparation carries over. Honest by design. Scales: drop consoles for 25′, add demos for 45′.&quot;</span>,
+    <span class="hljs-string">&quot;Eight beats in 18 minutes is tight; each console gets about two. Needs a strong visual (the board) so it doesn't feel like a list.&quot;</span>,
+    pick = <span class="hljs-literal">true</span>) &amp;
+  mission(<span class="hljs-string">&quot;B&quot;</span>, <span class="hljs-string">&quot;From the pad to the payload&quot;</span>, <span class="hljs-string">&quot;&lt;em&gt;25′&lt;/em&gt;&lt;em&gt;demo: medium&lt;/em&gt;&quot;</span>,
+    <span class="hljs-string">&quot;&lt;p&gt;Climb the stack from the bottom: hardware and firmware, kernel, runtime and memory, compiler and macros, applications and GUIs, &quot;</span> &amp;
+    <span class="hljs-string">&quot;the browser, and at the top the human (cognitive load). Each layer is one Nim project.&lt;/p&gt;&quot;</span>,
+    <span class="hljs-string">&quot;Answers </span><span class="hljs-meta">\&quot;</span><span class="hljs-string">is it systems?</span><span class="hljs-meta">\&quot;</span><span class="hljs-string"> first, then earns the whimsy at the top. Easy for a systems audience to follow.&quot;</span>,
+    <span class="hljs-string">&quot;Your own experiments are all near the top of the stack, so the low layers are other people's work only.&quot;</span>) &amp;
+  mission(<span class="hljs-string">&quot;C&quot;</span>, <span class="hljs-string">&quot;Mercury, Gemini, Apollo&quot;</span>, <span class="hljs-string">&quot;&lt;em&gt;45′&lt;/em&gt;&lt;em&gt;demo: high&lt;/em&gt;&quot;</span>,
+    <span class="hljs-string">&quot;&lt;p&gt;Three programs of growing ambition. Mercury: one-person flights, small whimsical tools (parloku, cadero). &quot;</span> &amp;
+    <span class="hljs-string">&quot;Gemini: two-seat docking, interop (nanuq and Rust, nanuq-more and Python). Apollo: going far, the compiler as a platform (cicak, Nimony) and the community's kernels and browsers.&lt;/p&gt;&quot;</span>,
+    <span class="hljs-string">&quot;A strong arc with a climax. Lets the lab projects lead.&quot;</span>,
+    <span class="hljs-string">&quot;Needs the 45′ slot. The space history can eat the time it decorates.&quot;</span>) &amp;
+  mission(<span class="hljs-string">&quot;D&quot;</span>, <span class="hljs-string">&quot;Thinking in systems&quot;</span>, <span class="hljs-string">&quot;&lt;em&gt;25′&lt;/em&gt;&lt;em&gt;demo: low&lt;/em&gt;&quot;</span>,
+    <span class="hljs-string">&quot;&lt;p&gt;An essay talk. Meadows' elements, interconnections and purpose, applied to a language. Stocks and flows: libraries and contributors. &quot;</span> &amp;
+    <span class="hljs-string">&quot;Feedback loops: low cognitive load → more experiments → more libraries, and agents as a new loop. Nim as the example throughout.&lt;/p&gt;&quot;</span>,
+    <span class="hljs-string">&quot;The most original take, and directly answers </span><span class="hljs-meta">\&quot;</span><span class="hljs-string">what is systems thinking?</span><span class="hljs-meta">\&quot;</span><span class="hljs-string">. Nobody else in the room will give this talk.&quot;</span>,
+    <span class="hljs-string">&quot;Little code for a room that wants code. Risky if the abstraction doesn't land.&quot;</span>) &amp;
+  mission(<span class="hljs-string">&quot;E&quot;</span>, <span class="hljs-string">&quot;Mission log: four flights in four weeks&quot;</span>, <span class="hljs-string">&quot;&lt;em&gt;25′&lt;/em&gt;&lt;em&gt;demo: high&lt;/em&gt;&quot;</span>,
+    <span class="hljs-string">&quot;&lt;p&gt;A case-study talk. nanuq, cicak, cadero and parloku, each a short flight report: the goal, what Nim made easy, what broke, &quot;</span> &amp;
+    <span class="hljs-string">&quot;what it says about Nim as a systems language. The agents and OpenSpec workflow as the ground crew.&lt;/p&gt;&quot;</span>,
+    <span class="hljs-string">&quot;Concrete and personal; the devroom asks for </span><span class="hljs-meta">\&quot;</span><span class="hljs-string">a cool project you built</span><span class="hljs-meta">\&quot;</span><span class="hljs-string">. All the material exists.&quot;</span>,
+    <span class="hljs-string">&quot;Reads as a portfolio. Weak on the low-level end, and the agent angle may dominate questions.&quot;</span>) &amp;
+  mission(<span class="hljs-string">&quot;F&quot;</span>, <span class="hljs-string">&quot;One payload, many boosters&quot;</span>, <span class="hljs-string">&quot;&lt;em&gt;25′&lt;/em&gt;&lt;em&gt;demo: very high&lt;/em&gt;&quot;</span>,
+    <span class="hljs-string">&quot;&lt;p&gt;One small program (say, a wordoku solver) launched on every target live: C, C++, Objective-C, JavaScript in the browser, &quot;</span> &amp;
+    <span class="hljs-string">&quot;a Python extension, a Playdate, WebAssembly through emscripten. Each launch shows one feature.&lt;/p&gt;&quot;</span>,
+    <span class="hljs-string">&quot;Memorable and visual. The backends are Nim's most distinctive trait among systems languages.&quot;</span>,
+    <span class="hljs-string">&quot;Live demos at FOSDEM (with FOSDEM wifi) are a gamble. Shows breadth, less depth.&quot;</span>) &amp;
+  mission(<span class="hljs-string">&quot;G&quot;</span>, <span class="hljs-string">&quot;Humans and agents in the loop&quot;</span>, <span class="hljs-string">&quot;&lt;em&gt;25′&lt;/em&gt;&lt;em&gt;demo: medium&lt;/em&gt;&quot;</span>,
+    <span class="hljs-string">&quot;&lt;p&gt;Nim as a language for agent-written code. Low cognitive load, a strict and fast compiler, macros that keep code short, &quot;</span> &amp;
+    <span class="hljs-string">&quot;and what happened when the lab projects were built that way: what agents get right and wrong in Nim.&lt;/p&gt;&quot;</span>,
+    <span class="hljs-string">&quot;Very topical, with first-hand data.&quot;</span>,
+    <span class="hljs-string">&quot;Divisive at FOSDEM; the language becomes a backdrop. Better as one console (SURGEON) than as the whole talk.&quot;</span>) &amp;
+  <span class="hljs-string">&quot;&lt;/div&gt;&quot;</span>
+
+nbText: <span class="hljs-string">&quot;&quot;&quot;
+### Recommendation
+
+Fly **A, the go/no-go poll**, and borrow from the others:
+
+- the **opening** of D: the 1998 split and Meadows' definition, one slide each, to set up &quot;what is a system&quot;;
+- the **console demos** from E: lab projects as the second example on each console, after a community example;
+- a **running gag** from F: the poll board itself is Nim compiled to JS, and a single slide shows the same file on four backends;
+- the **agent angle** from G, but kept to one console (SURGEON), so it is a point and not the whole talk.
+
+Ask for **25 minutes**. Eight consoles fit if each is two minutes, and the poll format makes cutting one easy on the day.
+If you'd rather have 45, profile C (Mercury, Gemini, Apollo) is the one that uses the time best.
+&quot;&quot;&quot;</span>
+
+nbText: <span class="hljs-string">&quot;&quot;&quot;
+### Flight plan for 25 minutes
+
+| Phase | Min | Content |
+|---|---|---|
+| T-minus | 3 | Freedom 7 checks. What's a systems language: Ousterhout's split, Meadows' definition, Nim's &quot;efficient, expressive, elegant&quot;. Thesis. |
+| Poll: BOOSTER, EECOM | 4 | Bare metal (Fusion OS, Playdate). Memory: ORC and `=destroy`, nanuq owning Rust objects. |
+| Poll: GUIDO, FIDO | 5 | Macros and compile time (the `poll` macro, nanuq's DSL). Four backends: cadero's plans and 3D viewer from one model. |
+| Poll: RETRO, INCO | 5 | Interop: nanuq calls Rust, nanuq-more is loaded by Python. The compiler as a platform: cicak's REPL with HCR and IC. |
+| Poll: SURGEON, CAPCOM | 4 | Cognitive load for humans and agents. The crew: Chawan, FrameOS, games, parloku. |
+| Splashdown | 2 | The holds, summed up. Where to start, where the community is. &quot;All systems Nim.&quot; |
+| Q&amp;A | 2 | |
+&quot;&quot;&quot;</span>
+
+<span class="hljs-comment"># ---------------------------------------------------------------- 7 proposal</span>
+nbRawHtml: <span class="hljs-string">&quot;&quot;&quot;&lt;h2&gt;&lt;span class=&quot;t&quot;&gt;T-04 · PAYLOAD&lt;/span&gt;The proposal&lt;/h2&gt;&quot;&quot;&quot;</span>
+
+nbText: <span class="hljs-string">&quot;&quot;&quot;
+Ready for the CfP form. The plain-text version below has the same words, for copy and paste.
+The bio is a placeholder: adjust it to how you want to be introduced.
+&quot;&quot;&quot;</span>
+
+<span class="hljs-keyword">const</span>
+  propTitle = <span class="hljs-string">&quot;All Systems Nim&quot;</span>
+  propSubtitle = <span class="hljs-string">&quot;A go/no-go poll for a systems language with a low cognitive load&quot;</span>
+  propAbstract = <span class="hljs-string">&quot;&quot;&quot;&quot;Cabin pressure go. Fuel system go. Oxygen go. All systems go.&quot; Before a launch, mission control polls every console, and each one answers go or no-go. This talk runs the same poll on Nim.
+
+Nim is an open source systems language that compiles to C, C++, Objective-C and JavaScript. It reads like Python, frees memory with deterministic destructors, and has macros that run inside the compiler. People have written kernels, a web browser from scratch, e-ink display frameworks, firmware, GUIs, games and an Ethereum client in it. It is also a language where a whimsical idea becomes a working tool in a weekend, with a human or a coding agent at the keyboard.
+
+We poll eight consoles, one capability each: bare metal, memory, metaprogramming, backends, interop, the compiler as a platform, cognitive load and the crew. Each answers with an example from the community and one from my recent experiments: a Polars dataframe library that calls Rust through its C ABI, Polars plugins written in Nim that Python loads, a REPL built on hot code reloading and incremental compilation, a furniture CAD with a 3D viewer in the browser, and a word puzzle game. Where Nim is not ready, we call a hold and say why.
+
+Along the way we ask what makes a language a systems language, and why a low cognitive load is a systems property, for humans and agents alike.&quot;&quot;&quot;</span>
+  propDescription = <span class="hljs-string">&quot;&quot;&quot;No Nim knowledge is needed: the examples read like Python. The talk is for people who build systems in any language and want to know what is different about Nim, and for Nim users looking for arguments.
+
+Outline (25 minutes):
+1. T-minus (3 min): the Freedom 7 checks; what is a systems language, from Ousterhout's 1998 split between system and scripting languages to Nim's aim of being efficient, expressive and elegant.
+2. The poll (18 min): eight consoles, each a capability with a community example, an example of mine and a verdict.
+   - Bare metal: compiling through C, no runtime; kernels, microcontrollers, a handheld console.
+   - Memory: ORC, move semantics and destructors; a Nim library owning objects on the Rust heap.
+   - Metaprogramming: templates, macros and compile-time code; DSLs for dataframes and GUIs.
+   - Backends: one model drawn natively and in the browser.
+   - Interop: calling Rust through the C ABI; Nim plugins loaded by Python Polars.
+   - The compiler as a platform: hot code reloading and incremental compilation for a REPL; the next compiler, Nimony.
+   - Cognitive load: why it matters for people, and for coding agents.
+   - The crew: a browser from scratch, e-ink frames, games, and some whimsy.
+3. Splashdown (2 min): the holds (ecosystem size, tooling, a compiler transition), and where to start.
+
+Every example links to an open source repository and to a notebook page that explains it.&quot;&quot;&quot;</span>
+  propBio = <span class="hljs-string">&quot;&quot;&quot;Pietro Peterlongo is a mathematician and data scientist at AgileLab, maintainer of nimib (literate programming notebooks in Nim) and a long-time organizer of the Nim devroom at FOSDEM. He organizes Python Milan and PyData Milan, and builds odd and useful things in Nim.&quot;&quot;&quot;</span>
+
+nbRawHtml: &amp;<span class="hljs-string">&quot;&quot;&quot;
+&lt;div class=&quot;form&quot;&gt;
+&lt;div class=&quot;row&quot;&gt;&lt;div class=&quot;lab&quot;&gt;Title&lt;/div&gt;&lt;div class=&quot;val&quot;&gt;&lt;div class=&quot;title&quot;&gt;{propTitle}&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;row&quot;&gt;&lt;div class=&quot;lab&quot;&gt;Subtitle&lt;/div&gt;&lt;div class=&quot;val&quot;&gt;{propSubtitle}&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;row&quot;&gt;&lt;div class=&quot;lab&quot;&gt;Track&lt;/div&gt;&lt;div class=&quot;val&quot;&gt;Open Source Systems Languages&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;row&quot;&gt;&lt;div class=&quot;lab&quot;&gt;Duration&lt;/div&gt;&lt;div class=&quot;val&quot;&gt;25 minutes&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;row&quot;&gt;&lt;div class=&quot;lab&quot;&gt;Abstract&lt;/div&gt;&lt;div class=&quot;val&quot;&gt;&lt;p&gt;{propAbstract.replace(&quot;\n\n&quot;, &quot;&lt;/p&gt;&lt;p&gt;&quot;)}&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;row&quot;&gt;&lt;div class=&quot;lab&quot;&gt;Description&lt;/div&gt;&lt;div class=&quot;val&quot;&gt;&lt;p&gt;{propDescription.replace(&quot;\n\n&quot;, &quot;&lt;/p&gt;&lt;p&gt;&quot;).replace(&quot;\n&quot;, &quot;&lt;br&gt;&quot;)}&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;row&quot;&gt;&lt;div class=&quot;lab&quot;&gt;Speaker bio&lt;/div&gt;&lt;div class=&quot;val&quot;&gt;&lt;p&gt;{propBio}&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&quot;&quot;&quot;</span>
+
+<span class="hljs-keyword">let</span> proposalPlain = &amp;<span class="hljs-string">&quot;&quot;&quot;TITLE
+{propTitle}: {propSubtitle}
+
+TRACK
+Open Source Systems Languages (25 minutes)
+
+ABSTRACT
+{propAbstract}
+
+DESCRIPTION
+{propDescription}
+
+SPEAKER BIO
+{propBio}
+&quot;&quot;&quot;</span>
+<span class="hljs-comment"># also written next to the page, for copy and paste</span>
+writeFile(currentSourcePath().parentDir / <span class="hljs-string">&quot;proposal.txt&quot;</span>, proposalPlain)
+
+nbRawHtml: <span class="hljs-string">&quot;&quot;&quot;&lt;details&gt;&lt;summary&gt;PLAIN TEXT FOR THE CFP FORM&lt;/summary&gt;&quot;&quot;&quot;</span> &amp;
+  <span class="hljs-string">&quot;&quot;&quot;&lt;button class=&quot;copy&quot; id=&quot;copy&quot;&gt;Copy to clipboard&lt;/button&gt;&quot;&quot;&quot;</span> &amp;
+  <span class="hljs-string">&quot;&quot;&quot;&lt;pre class=&quot;plain&quot; id=&quot;plain&quot;&gt;&quot;&quot;&quot;</span> &amp; proposalPlain.multiReplace((<span class="hljs-string">&quot;&amp;&quot;</span>, <span class="hljs-string">&quot;&amp;amp;&quot;</span>), (<span class="hljs-string">&quot;&lt;&quot;</span>, <span class="hljs-string">&quot;&amp;lt;&quot;</span>), (<span class="hljs-string">&quot;&gt;&quot;</span>, <span class="hljs-string">&quot;&amp;gt;&quot;</span>)) &amp;
+  <span class="hljs-string">&quot;&quot;&quot;&lt;/pre&gt;&lt;/details&gt;&quot;&quot;&quot;</span>
+
+nbText: <span class="hljs-string">&quot;&quot;&quot;
+#### Other titles, if the pun is too much
+
+- All Systems Nim: from kernels to wordokus
+- All Systems Nim: low cognitive load, high ceiling
+- Go/No-Go: polling Nim as a systems language
+&quot;&quot;&quot;</span>
+
+<span class="hljs-comment"># ---------------------------------------------------------------- 8 abort modes</span>
+nbRawHtml: <span class="hljs-string">&quot;&quot;&quot;&lt;h2&gt;&lt;span class=&quot;t&quot;&gt;T-03 · ABORT MODES&lt;/span&gt;Risks and open questions&lt;/h2&gt;&quot;&quot;&quot;</span>
+
+nbText: <span class="hljs-string">&quot;&quot;&quot;
+- **Deadline.** The CfP closes on 23 November, three days before the Paris talk. Submit the proposal first; the slides
+  can reuse the Paris machinery (nimiSlides, OpenSpec talk schema, explainers) after Paris.
+- **&quot;Is it systems?&quot;** The whimsical projects are the most fun and the least low-level. Keep the order: credentials first
+  (BOOSTER, EECOM), whimsy last (CAPCOM).
+- **The agent angle** is the most likely to start an argument at FOSDEM. Keep it a point about cognitive load, with your own
+  data, and avoid predictions.
+- **Overlap with Paris.** Some examples (the success stories, nimib) are shared. The audience is different, and the focus
+  moves from data to systems, so a little overlap is fine; reuse the explainers.
+- **Facts to check** before slides: the exact Freedom 7 wording (Spacelog transcript), the community project claims in the table (all from memory),
+  and nanuq's numbers on the day.
+- **Demo budget.** No live builds on stage. Recorded demos or pages that already run in the browser (parloku, cadero's viewer,
+  this board) are safe.
+&quot;&quot;&quot;</span>
+
+<span class="hljs-comment"># ---------------------------------------------------------------- 9 sources</span>
+nbRawHtml: <span class="hljs-string">&quot;&quot;&quot;&lt;h2&gt;&lt;span class=&quot;t&quot;&gt;T-02 · REFERENCES&lt;/span&gt;Sources&lt;/h2&gt;&quot;&quot;&quot;</span>
+
+nbText: <span class="hljs-string">&quot;&quot;&quot;
+- FOSDEM 2027: [accepted developer rooms](https://fosdem.org/2027/news/accepted-developer-rooms/) and the
+  [Open Source Systems Languages devroom page](https://mikeshah.github.io/fosdem27-ossl-devroom/).
+- [FOSDEM devrooms 2024 to 2027 compared](https://pietroppeter.github.io/claude-artifacts/fosdem-devrooms/), an earlier page in this repository.
+- [Sailing Seas of Scientific Nim](https://github.com/pietroppeter/talk-sailing-seas-scientific-nim): abstract, outline and explainers.
+- The lab: [nanuq](https://github.com/pietroppeter/nanuq), [nanuq-more](https://github.com/pietroppeter/nanuq-more),
+  [cicak](https://github.com/pietroppeter/cicak), [cadero](https://github.com/pietroppeter/cadero),
+  [parloku](https://github.com/pietroppeter/parloku), [zogyn](https://github.com/pietroppeter/zogyn).
+- John K. Ousterhout, &quot;Scripting: Higher Level Programming for the 21st Century&quot;, *IEEE Computer*, March 1998.
+- Donella H. Meadows, *Thinking in Systems: A Primer*, 2008.
+- [Writing an OS in Nim](https://0xc0ffee.netlify.app/osdev/01-intro) (Fusion OS).
+&quot;&quot;&quot;</span>
+
+nbRawHtml: <span class="hljs-string">&quot;&quot;&quot;&lt;p class=&quot;small&quot; style=&quot;margin-top:30px&quot;&gt;Countdown complete. &lt;span class=&quot;allgo&quot; style=&quot;color:var(--ink)&quot;&gt;All systems Nim.&lt;/span&gt;&lt;/p&gt;&quot;&quot;&quot;</span>
+
+<span class="hljs-comment"># ---------------------------------------------------------------- the board, in Nim compiled to JS</span>
+nbJsFromCode:
+  <span class="hljs-keyword">import</span> std/[dom, math]
+
+  <span class="hljs-keyword">let</span> lamps = document.querySelectorAll(<span class="hljs-string">&quot;.lamp&quot;</span>)
+  <span class="hljs-keyword">let</span> callout = document.getElementById(<span class="hljs-string">&quot;callout&quot;</span>)
+  <span class="hljs-keyword">var</span> running = <span class="hljs-literal">false</span>
+
+  <span class="hljs-keyword">proc</span> say(html: <span class="hljs-built_in">string</span>) = callout.innerHTML = html.<span class="hljs-built_in">cstring</span>
+
+  <span class="hljs-keyword">proc</span> reset() =
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">0</span> ..&lt; lamps.len:
+      lamps[i].classList.remove(<span class="hljs-string">&quot;go&quot;</span>)
+      lamps[i].classList.remove(<span class="hljs-string">&quot;hold&quot;</span>)
+      lamps[i].classList.remove(<span class="hljs-string">&quot;live&quot;</span>)
+
+  <span class="hljs-keyword">proc</span> step(i: <span class="hljs-built_in">int</span>) =
+    <span class="hljs-keyword">if</span> i &gt; <span class="hljs-number">0</span>: lamps[i - <span class="hljs-number">1</span>].classList.remove(<span class="hljs-string">&quot;live&quot;</span>)
+    <span class="hljs-keyword">if</span> i &gt;= lamps.len:
+      say(<span class="hljs-string">&quot;&lt;span class=</span><span class="hljs-meta">\&quot;</span><span class="hljs-string">k</span><span class="hljs-meta">\&quot;</span><span class="hljs-string">&gt;FLIGHT:&lt;/span&gt; All consoles report go.&lt;br&gt;&lt;span class=</span><span class="hljs-meta">\&quot;</span><span class="hljs-string">allgo</span><span class="hljs-meta">\&quot;</span><span class="hljs-string">&gt;All systems Nim.&lt;/span&gt;&quot;</span>)
+      running = <span class="hljs-literal">false</span>
+      <span class="hljs-keyword">return</span>
+    <span class="hljs-keyword">let</span> lamp = lamps[i]
+    lamp.classList.add(<span class="hljs-string">&quot;live&quot;</span>)
+    lamp.classList.add(<span class="hljs-string">&quot;go&quot;</span>)
+    say(<span class="hljs-string">&quot;&lt;span class=</span><span class="hljs-meta">\&quot;</span><span class="hljs-string">k</span><span class="hljs-meta">\&quot;</span><span class="hljs-string">&gt;&quot;</span> &amp; $lamp.getAttribute(<span class="hljs-string">&quot;data-code&quot;</span>) &amp; <span class="hljs-string">&quot;:&lt;/span&gt; &quot;</span> &amp; $lamp.getAttribute(<span class="hljs-string">&quot;data-call&quot;</span>) &amp; <span class="hljs-string">&quot; &lt;b&gt;Go.&lt;/b&gt;&quot;</span>)
+    <span class="hljs-keyword">discard</span> setTimeout(<span class="hljs-keyword">proc</span> () = step(i + <span class="hljs-number">1</span>), <span class="hljs-number">1300</span>)
+
+  document.getElementById(<span class="hljs-string">&quot;poll&quot;</span>).addEventListener(<span class="hljs-string">&quot;click&quot;</span>, <span class="hljs-keyword">proc</span> (e: <span class="hljs-type">Event</span>) =
+    <span class="hljs-keyword">if</span> running: <span class="hljs-keyword">return</span>
+    running = <span class="hljs-literal">true</span>
+    reset()
+    say(<span class="hljs-string">&quot;&lt;span class=</span><span class="hljs-meta">\&quot;</span><span class="hljs-string">k</span><span class="hljs-meta">\&quot;</span><span class="hljs-string">&gt;FLIGHT:&lt;/span&gt; All consoles, go/no-go for launch.&quot;</span>)
+    <span class="hljs-keyword">discard</span> setTimeout(<span class="hljs-keyword">proc</span> () = step(<span class="hljs-number">0</span>), <span class="hljs-number">900</span>))
+
+  <span class="hljs-comment"># consoles that answer &quot;go, with a hold&quot; (see the holds in the console section)</span>
+  <span class="hljs-keyword">const</span> holdCodes = [<span class="hljs-string">&quot;EECOM&quot;</span>, <span class="hljs-string">&quot;FIDO&quot;</span>, <span class="hljs-string">&quot;RETRO&quot;</span>, <span class="hljs-string">&quot;INCO&quot;</span>, <span class="hljs-string">&quot;SURGEON&quot;</span>, <span class="hljs-string">&quot;CAPCOM&quot;</span>]
+  document.getElementById(<span class="hljs-string">&quot;holds&quot;</span>).addEventListener(<span class="hljs-string">&quot;click&quot;</span>, <span class="hljs-keyword">proc</span> (e: <span class="hljs-type">Event</span>) =
+    <span class="hljs-keyword">if</span> running: <span class="hljs-keyword">return</span>
+    reset()
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">0</span> ..&lt; lamps.len:
+      <span class="hljs-keyword">let</span> code = $lamps[i].getAttribute(<span class="hljs-string">&quot;data-code&quot;</span>)
+      <span class="hljs-keyword">if</span> code <span class="hljs-keyword">in</span> holdCodes: lamps[i].classList.add(<span class="hljs-string">&quot;hold&quot;</span>)
+      <span class="hljs-keyword">else</span>: lamps[i].classList.add(<span class="hljs-string">&quot;go&quot;</span>)
+    say(<span class="hljs-string">&quot;&lt;span class=</span><span class="hljs-meta">\&quot;</span><span class="hljs-string">k</span><span class="hljs-meta">\&quot;</span><span class="hljs-string">&gt;FLIGHT:&lt;/span&gt; Amber is go, with a hold: it works, with a caveat the talk names. Green is clean go.&quot;</span>))
+
+  <span class="hljs-comment"># days left to the CfP deadline, 23 November 2026</span>
+  <span class="hljs-keyword">proc</span> msNow(): <span class="hljs-built_in">float</span> {.importjs: <span class="hljs-string">&quot;Date.now()&quot;</span>.}
+  <span class="hljs-keyword">proc</span> msUtc(y, m, d: <span class="hljs-built_in">int</span>): <span class="hljs-built_in">float</span> {.importjs: <span class="hljs-string">&quot;Date.UTC(#, #, #)&quot;</span>.}   <span class="hljs-comment"># month from 0</span>
+  <span class="hljs-keyword">let</span> days = <span class="hljs-built_in">int</span>(floor((msUtc(<span class="hljs-number">2026</span>, <span class="hljs-number">10</span>, <span class="hljs-number">24</span>) - msNow()) / <span class="hljs-number">86_400_000.0</span>))
+  <span class="hljs-keyword">let</span> tm = document.getElementById(<span class="hljs-string">&quot;tminus&quot;</span>)
+  <span class="hljs-keyword">if</span> days &gt;= <span class="hljs-number">0</span>: tm.innerHTML = <span class="hljs-built_in">cstring</span>(<span class="hljs-string">&quot;T-MINUS &lt;b&gt;&quot;</span> &amp; $days &amp; <span class="hljs-string">&quot;&lt;/b&gt; DAYS TO CFP CLOSE&quot;</span>)
+  <span class="hljs-keyword">else</span>: tm.innerHTML = <span class="hljs-built_in">cstring</span>(<span class="hljs-string">&quot;CFP CLOSED · &lt;b&gt;T+&quot;</span> &amp; $(-days) &amp; <span class="hljs-string">&quot;&lt;/b&gt; DAYS&quot;</span>)
+
+  document.getElementById(<span class="hljs-string">&quot;copy&quot;</span>).addEventListener(<span class="hljs-string">&quot;click&quot;</span>, <span class="hljs-keyword">proc</span> (e: <span class="hljs-type">Event</span>) =
+    <span class="hljs-keyword">let</span> txt = document.getElementById(<span class="hljs-string">&quot;plain&quot;</span>).textContent
+    {.emit: <span class="hljs-string">&quot;navigator.clipboard.writeText(`txt`);&quot;</span>.}
+    document.getElementById(<span class="hljs-string">&quot;copy&quot;</span>).textContent = <span class="hljs-string">&quot;Copied&quot;</span>)
+
+nbSave
+</code></pre>
+</section>
+  
+<script>
+  function toggleSourceDisplay() {
+    var btn = document.getElementById("show")
+    var source = document.getElementById("source");
+    if (btn.innerHTML=="Show Source") {
+      btn.innerHTML = "Hide Source";
+      source.style.display = "block";
+    } else {
+      btn.innerHTML = "Show Source";
+      source.style.display = "none";
+    }
+  }
+</script>
+  
+</body>

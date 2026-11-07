@@ -1,0 +1,35 @@
+TITLE
+All Systems Nim: A go/no-go poll for a systems language with a low cognitive load
+
+TRACK
+Open Source Systems Languages (25 minutes)
+
+ABSTRACT
+"Cabin pressure go. Fuel system go. Oxygen go. All systems go." Before a launch, mission control polls every console, and each one answers go or no-go. This talk runs the same poll on Nim.
+
+Nim is an open source systems language that compiles to C, C++, Objective-C and JavaScript. It reads like Python, frees memory with deterministic destructors, and has macros that run inside the compiler. People have written kernels, a web browser from scratch, e-ink display frameworks, firmware, GUIs, games and an Ethereum client in it. It is also a language where a whimsical idea becomes a working tool in a weekend, with a human or a coding agent at the keyboard.
+
+We poll eight consoles, one capability each: bare metal, memory, metaprogramming, backends, interop, the compiler as a platform, cognitive load and the crew. Each answers with an example from the community and one from my recent experiments: a Polars dataframe library that calls Rust through its C ABI, Polars plugins written in Nim that Python loads, a REPL built on hot code reloading and incremental compilation, a furniture CAD with a 3D viewer in the browser, and a word puzzle game. Where Nim is not ready, we call a hold and say why.
+
+Along the way we ask what makes a language a systems language, and why a low cognitive load is a systems property, for humans and agents alike.
+
+DESCRIPTION
+No Nim knowledge is needed: the examples read like Python. The talk is for people who build systems in any language and want to know what is different about Nim, and for Nim users looking for arguments.
+
+Outline (25 minutes):
+1. T-minus (3 min): the Freedom 7 checks; what is a systems language, from Ousterhout's 1998 split between system and scripting languages to Nim's aim of being efficient, expressive and elegant.
+2. The poll (18 min): eight consoles, each a capability with a community example, an example of mine and a verdict.
+   - Bare metal: compiling through C, no runtime; kernels, microcontrollers, a handheld console.
+   - Memory: ORC, move semantics and destructors; a Nim library owning objects on the Rust heap.
+   - Metaprogramming: templates, macros and compile-time code; DSLs for dataframes and GUIs.
+   - Backends: one model drawn natively and in the browser.
+   - Interop: calling Rust through the C ABI; Nim plugins loaded by Python Polars.
+   - The compiler as a platform: hot code reloading and incremental compilation for a REPL; the next compiler, Nimony.
+   - Cognitive load: why it matters for people, and for coding agents.
+   - The crew: a browser from scratch, e-ink frames, games, and some whimsy.
+3. Splashdown (2 min): the holds (ecosystem size, tooling, a compiler transition), and where to start.
+
+Every example links to an open source repository and to a notebook page that explains it.
+
+SPEAKER BIO
+Pietro Peterlongo is a mathematician and data scientist at AgileLab, maintainer of nimib (literate programming notebooks in Nim) and a long-time organizer of the Nim devroom at FOSDEM. He organizes Python Milan and PyData Milan, and builds odd and useful things in Nim.
