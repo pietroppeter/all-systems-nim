@@ -9,6 +9,7 @@
     }
   },
   "enabledPlugins": {
-    "nimib@pietroppeter-skills": true
+    "nimib@pietroppeter-skills": true,
+    "workflow@pietroppeter-skills": true
   }
 }
