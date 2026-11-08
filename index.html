@@ -173,6 +173,9 @@ figcaption {
 </style>
   
     
+<!-- claude-artifacts:codeblocks -->
+<style>pre{overflow-x:auto}pre>code{overflow-x:auto}</style>
+<!-- /claude-artifacts:codeblocks -->
 </head>
 <body>
 <header><span>Flight plan · a nimib notebook</span><span>FOSDEM 2027 · Open Source Systems Languages</span></header>
@@ -396,17 +399,17 @@ No virtual machine, no mandatory runtime, binaries in the tens of kilobytes. You
 <div class="station"><div class="hd"><i></i><b>EECOM</b><span>Life support</span></div><div class="bd"><p>Since Nim 2.0 the default memory management is ORC: reference counting with move semantics and a cycle collector,
 so memory is freed at a predictable point, with no stop-the-world pauses. You can write your own <code>=destroy</code>,
 <code>=copy</code> and <code>=sink</code> hooks. nanuq uses them to own objects that live on the Rust heap:</p>
-<pre><code class="nohighlight">proc `=destroy`(x: DataFrameObj) =
-  if x.raw != nil: nq_df_free(x.raw)
+<pre><code class="language-nim"><span class="hljs-keyword">proc</span> <span class="hljs-title function_">`=destroy`</span>(x: DataFrameObj) =
+  <span class="hljs-keyword">if</span> x.raw != <span class="hljs-keyword">nil</span>: nq_df_free(x.raw)
 
-proc `=copy`(a: var DataFrameObj, b: DataFrameObj) {.error.}   # no accidental copies</code></pre>
+<span class="hljs-keyword">proc</span> <span class="hljs-title function_">`=copy`</span>(a: <span class="hljs-keyword">var</span> DataFrameObj, b: DataFrameObj) <span class="hljs-string">{.</span><span class="hljs-string">error</span><span class="hljs-string">.}</span>   <span class="hljs-comment"># no accidental copies</span></code></pre>
 <p>That is RAII across a language boundary, in three lines. <b>Community:</b> Nimbus runs an Ethereum node on a Raspberry Pi.</p><div class="hold">ORC's cycle collector and multithreading took years to settle; older libraries and tutorials still assume refc.</div></div></div>
 <div class="station"><div class="hd"><i></i><b>GUIDO</b><span>Guidance</span></div><div class="bd"><p>Templates, hygienic macros over the typed AST, and a VM that runs ordinary Nim at compile time. Libraries
 grow their own syntax without a separate code generator. In nanuq, a dataframe is a block:</p>
-<pre><code class="nohighlight">let bears = newDataFrame:
-  name: ["Nanuq", "Siku", "Ursa", "Kallik"]
-  island: ["Svalbard", "Svalbard", "Wrangel", "Wrangel"]
-  kg: [420, 95, 380, nil]                # nil is a missing value</code></pre>
+<pre><code class="language-nim"><span class="hljs-keyword">let</span> bears = newDataFrame:
+  name: [<span class="hljs-string">"</span><span class="hljs-string">Nanuq</span><span class="hljs-string">"</span>, <span class="hljs-string">"</span><span class="hljs-string">Siku</span><span class="hljs-string">"</span>, <span class="hljs-string">"</span><span class="hljs-string">Ursa</span><span class="hljs-string">"</span>, <span class="hljs-string">"</span><span class="hljs-string">Kallik</span><span class="hljs-string">"</span>]
+  island: [<span class="hljs-string">"</span><span class="hljs-string">Svalbard</span><span class="hljs-string">"</span>, <span class="hljs-string">"</span><span class="hljs-string">Svalbard</span><span class="hljs-string">"</span>, <span class="hljs-string">"</span><span class="hljs-string">Wrangel</span><span class="hljs-string">"</span>, <span class="hljs-string">"</span><span class="hljs-string">Wrangel</span><span class="hljs-string">"</span>]
+  kg: [<span class="hljs-number">420</span>, <span class="hljs-number">95</span>, <span class="hljs-number">380</span>, <span class="hljs-keyword">nil</span>]                <span class="hljs-comment"># nil is a missing value</span></code></pre>
 <p>Below, a macro written for this page runs the poll. The strings are put together by the compiler;
 the program only prints them.</p></div></div>
 <pre><code class="nohighlight nim hljs"><span class="hljs-keyword">import</span> std/macros
@@ -437,16 +440,16 @@ macro DSL; Karax does the same for the web.</div>
 That is not a gimmick for the web: it is how cadero draws its plans natively and shows a 3D viewer in the browser
 from the same model, how zogyn tests its drag engine natively and ships it to the browser unchanged, and how the board at
 the top of this page works.</p>
-<pre><code class="nohighlight">nim c   -d:release app.nim     # C, then your C compiler
-nim cpp app.nim                # C++: talk to C++ libraries, Unreal, Qt
-nim objc app.nim               # Objective-C: talk to Apple frameworks
-nim js  app.nim                # JavaScript: the browser
-nim e   build.nims             # NimScript: the compiler's VM</code></pre><div class="hold">The JS backend is a different world: no threads, no C FFI, and some stdlib modules don't exist there.</div></div></div>
+<pre><code class="language-bash">nim c   -d:release app.nim     <span class="hljs-comment"># C, then your C compiler
+</span>nim cpp app.nim                <span class="hljs-comment"># C++: talk to C++ libraries, Unreal, Qt
+</span>nim objc app.nim               <span class="hljs-comment"># Objective-C: talk to Apple frameworks
+</span>nim js  app.nim                <span class="hljs-comment"># JavaScript: the browser
+</span>nim e   build.nims             # NimScript: the compiler's VM</code></pre><div class="hold">The JS backend is a different world: no threads, no C FFI, and some stdlib modules don't exist there.</div></div></div>
 <div class="station"><div class="hd"><i></i><b>RETRO</b><span>Docking</span></div><div class="bd"><p>Nim speaks the C ABI in both directions. <code>importc</code> calls anything with a C interface, including Rust
 that exports one: that is all of nanuq. <code>exportc</code> and <code>--app:lib</code> go the other way:
 nanuq-more builds a shared library that Python Polars loads as a plugin, from plain Nim procs:</p>
-<pre><code class="nohighlight">proc isoweek*(d: Date32): IsoWeek {.polarsExpr.} =
-  ...   # plain Nim; the pragma also exports it to Polars</code></pre>
+<pre><code class="language-nim"><span class="hljs-keyword">proc</span> <span class="hljs-title function_">isoweek</span>*(d: Date32): IsoWeek <span class="hljs-string">{.</span><span class="hljs-string">polarsExpr</span><span class="hljs-string">.}</span> =
+  ...   <span class="hljs-comment"># plain Nim; the pragma also exports it to Polars</span></code></pre>
 <p><b>Community:</b> nimpy (Python both ways), godot-nim, NimForUE, wrappers generated by Futhark from C headers.</p><div class="hold">nanuq's Rust half is a ~286 MB static library (53 MB download). Interop is easy; distribution is the hard part. nanuqy is the experiment to drop it.</div></div></div>
 <div class="station"><div class="hd"><i></i><b>INCO</b><span>Compiler</span></div><div class="bd"><p>The compiler is a library and a platform: NimScript for build files, hot code reloading (each module a shared library,
 globals survive reloads), and incremental compilation in Nim 2.4. cicak puts the last two together to try a real REPL:
