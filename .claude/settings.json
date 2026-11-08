@@ -3,8 +3,7 @@
     "pietroppeter-skills": {
       "source": {
         "source": "github",
-        "repo": "pietroppeter/skills",
-        "ref": "claude/project-thread-p63ru4"
+        "repo": "pietroppeter/skills"
       }
     }
   },
