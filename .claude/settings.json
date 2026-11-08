@@ -1,0 +1,14 @@
+{
+  "extraKnownMarketplaces": {
+    "pietroppeter-skills": {
+      "source": {
+        "source": "github",
+        "repo": "pietroppeter/skills"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "nimib@pietroppeter-skills": true,
+    "phone-first@pietroppeter-skills": true
+  }
+}
