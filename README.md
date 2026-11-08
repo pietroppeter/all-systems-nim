@@ -20,7 +20,7 @@ Then the post-build code-block pass from [claude-artifacts](https://github.com/p
 
 ```sh
 pip install pygments
-curl -sO https://raw.githubusercontent.com/pietroppeter/claude-artifacts/main/tools/codeblocks.py
+for t in codeblocks.py phonecheck.js; do curl -sO https://raw.githubusercontent.com/pietroppeter/claude-artifacts/main/tools/$t; done
 python3 codeblocks.py index.html
-node phonecheck.js index.html   # same folder; needs Playwright
+node phonecheck.js index.html   # needs Playwright
 ```
