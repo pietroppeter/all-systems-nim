@@ -10,6 +10,6 @@
   },
   "enabledPlugins": {
     "nimib@pietroppeter-skills": true,
-    "workflow@pietroppeter-skills": true
+    "phone-first@pietroppeter-skills": true
   }
 }
